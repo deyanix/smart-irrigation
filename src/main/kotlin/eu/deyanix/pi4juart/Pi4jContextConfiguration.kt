@@ -3,18 +3,34 @@ package eu.deyanix.pi4juart
 import com.pi4j.Pi4J
 import com.pi4j.context.Context
 import com.pi4j.io.serial.*
-import com.pi4j.plugin.pigpio.provider.serial.PiGpioSerialProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.nio.file.Files
+import java.nio.file.Path
 
 @Configuration
-class Pi4jContextConfiguration() {
-	private lateinit var pi4j: Context
-	private lateinit var serial: Serial
+class Pi4jContextConfiguration {
+	companion object {
+		val DEFAULT_SERIAL_LEGACY: Path = Path.of("/dev/ttyAMA")
+		val DEFAULT_SERIAL: Path = Path.of("/dev/ttyS0")
+	}
+
+	private final val pi4j: Context
+	private final val serial: Serial
 
 	init {
 		this.pi4j = Pi4J.newAutoContext()
 		this.serial = pi4j.create(getDefaultSerialConfig())
+	}
+
+	private final fun getDefaultSerialPort(): String {
+		if (Files.exists(DEFAULT_SERIAL)) {
+			return DEFAULT_SERIAL.toString()
+		}
+		if (Files.exists(DEFAULT_SERIAL_LEGACY)) {
+			return DEFAULT_SERIAL_LEGACY.toString()
+		}
+		throw UnsupportedOperationException("No default serial configuration found")
 	}
 
 	private final fun getDefaultSerialConfig(): SerialConfig {
@@ -24,9 +40,8 @@ class Pi4jContextConfiguration() {
 			.parity(Parity.NONE)
 			.stopBits(StopBits._1)
 			.flowControl(FlowControl.NONE)
-			.id("my-serial")
-			.device("/dev/ttyS0")
-			.provider(PiGpioSerialProvider::class.java)
+			.provider("pigpio-serial")
+			.device(getDefaultSerialPort())
 			.build()
 	}
 
