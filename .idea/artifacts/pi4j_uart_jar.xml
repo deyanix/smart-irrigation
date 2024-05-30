@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="pi4j-uart:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/pi4j_uart_jar</output-path>
+    <root id="archive" name="pi4j-uart.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/main/resourcese/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="pi4j-uart.main" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-core/2.6.0/4480fb526dfd333fc4e730d50396626a5ee9c27a/pi4j-core-2.6.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-library-pigpio/2.6.0/1b52cf47f6dff0091db4b3357e6c243eee530b94/pi4j-library-pigpio-2.6.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-plugin-pigpio/2.6.0/d5a86b3a62c668af6c3c55e1066e7794603c3ea/pi4j-plugin-pigpio-2.6.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-plugin-raspberrypi/2.6.0/9168a8fdb5ed06407cf2491b4792c8067cc6c6b1/pi4j-plugin-raspberrypi-2.6.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/2.0.12/48f109a2a6d8f446c794f3e3fa0d86df0cdfa312/slf4j-api-2.0.12.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-simple/2.0.12/5fb15030fb6158ef4f63ce4f889f72f4259a7bc3/slf4j-simple-2.0.12.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

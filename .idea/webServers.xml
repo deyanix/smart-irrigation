@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="68802239-7d36-4635-a591-4d8c76f2d2d0" name="raspberrypi">
+        <fileTransfer rootFolder="/home/deyanix/pi4j-uart" accessType="SFTP" host="192.168.16.110" port="22" sshConfigId="0ea672fc-0c93-4762-bff9-536959d70f87" sshConfig="deyanix@192.168.16.110:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
