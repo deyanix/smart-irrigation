@@ -4,44 +4,20 @@ plugins {
     id("java")
     id("application")
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("org.springframework.boot") version "3.3.0"
+    id("io.spring.dependency-management") version "1.1.5"
 }
 
 group = "eu.deyanix.pi4juart"
 version = "0.0.1-SNAPSHOT"
 
-tasks.withType<JavaCompile> {
-    options.release = 21
-}
-
-tasks.withType<JavaCompile>().configureEach {
-    options.encoding = "UTF-8"
-}
-
-plugins.withType<JavaPlugin>().configureEach {
-    java {
-        modularity.inferModulePath = true
-    }
-}
-
-tasks.register<Copy>("copyDistribution") {
-    from(configurations.default)
-    from(tasks.named("jar"))
-    from(layout.projectDirectory.file("assets/run.sh"))
-    into(layout.buildDirectory.dir("distribution"))
-}
-
-tasks.named("build") {
-    dependsOn("copyDistribution")
-}
-
 tasks.withType<ShadowJar> {
     mergeServiceFiles()
 }
 
-tasks.jar {
-    manifest {
-        attributes["Main-Class"] = application.mainClass
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 application {
@@ -53,8 +29,12 @@ repositories {
 }
 
 dependencies {
-    implementation("org.slf4j:slf4j-api:2.0.12")
-    implementation("org.slf4j:slf4j-simple:2.0.12")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-autoconfigure")
+    implementation("org.springframework.boot:spring-boot-actuator")
+    implementation("org.springframework.boot:spring-boot-autoconfigure-processor")
+    implementation("org.springframework.boot:spring-boot-configuration-processor")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     implementation("com.pi4j:pi4j-core:2.6.0")
     implementation("com.pi4j:pi4j-plugin-gpiod:2.6.0")
     implementation("com.pi4j:pi4j-plugin-pigpio:2.6.0")
