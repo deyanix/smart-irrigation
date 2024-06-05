@@ -1,4 +1,4 @@
-package eu.deyanix.pi4juart.service
+package eu.deyanix.smartirrigation.service
 
 import com.pi4j.io.serial.Serial
 import org.springframework.stereotype.Service

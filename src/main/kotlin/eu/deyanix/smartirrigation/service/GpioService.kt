@@ -1,4 +1,4 @@
-package eu.deyanix.pi4juart.service
+package eu.deyanix.smartirrigation.service
 
 import com.pi4j.context.Context
 import com.pi4j.io.gpio.digital.DigitalOutput

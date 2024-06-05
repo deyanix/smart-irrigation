@@ -1,4 +1,4 @@
-package eu.deyanix.pi4juart
+package eu.deyanix.smartirrigation.configurator
 
 import com.pi4j.Pi4J
 import com.pi4j.context.Context
@@ -9,9 +9,9 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 @Configuration
-class Pi4jContextConfiguration {
+class Pi4jContextConfigurator {
 	companion object {
-		val DEFAULT_SERIAL_LEGACY: Path = Path.of("/dev/ttyAMA")
+		val DEFAULT_SERIAL_LEGACY: Path = Path.of("/dev/ttyAMA0")
 		val DEFAULT_SERIAL: Path = Path.of("/dev/ttyS0")
 	}
 

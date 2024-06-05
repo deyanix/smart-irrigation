@@ -1,7 +1,7 @@
-package eu.deyanix.pi4juart.controller
+package eu.deyanix.smartirrigation.controller
 
-import eu.deyanix.pi4juart.service.SerialReader
-import eu.deyanix.pi4juart.service.SerialService
+import eu.deyanix.smartirrigation.service.SerialReader
+import eu.deyanix.smartirrigation.service.SerialService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
 import java.io.IOException

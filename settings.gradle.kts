@@ -1,2 +1,2 @@
-rootProject.name = "pi4j-uart"
+rootProject.name = "smart-irrigation"
 

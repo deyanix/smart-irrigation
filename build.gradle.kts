@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.24"
 }
 
-group = "eu.deyanix.pi4juart"
+group = "eu.deyanix.smartirrigation"
 version = "0.0.1-SNAPSHOT"
 
 tasks.withType<KotlinCompile> {
@@ -15,6 +15,10 @@ tasks.withType<KotlinCompile> {
         freeCompilerArgs += "-Xjsr305=strict"
         jvmTarget = "17"
     }
+}
+
+tasks.getByName<Jar>("jar") {
+    enabled = false
 }
 
 java {
@@ -32,9 +36,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-actuator")
     implementation("org.springframework.boot:spring-boot-autoconfigure-processor")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
+    implementation("org.springframework.integration:spring-integration-mqtt")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.json:json")
     implementation("com.pi4j:pi4j-core:2.6.0")
     implementation("com.pi4j:pi4j-plugin-gpiod:2.6.0")
     implementation("com.pi4j:pi4j-plugin-pigpio:2.6.0")

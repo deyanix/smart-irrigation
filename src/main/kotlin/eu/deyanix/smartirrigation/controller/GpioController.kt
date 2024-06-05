@@ -1,6 +1,6 @@
-package eu.deyanix.pi4juart.controller
+package eu.deyanix.smartirrigation.controller
 
-import eu.deyanix.pi4juart.service.GpioService
+import eu.deyanix.smartirrigation.service.GpioService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
