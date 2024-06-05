@@ -3,9 +3,9 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="68802239-7d36-4635-a591-4d8c76f2d2d0" name="raspberrypi" url="http://192.168.16.110:8080/">
-        <fileTransfer rootFolder="/home/deyanix/smart-irrigation" accessType="SFTP" host="192.168.16.110" port="22" sshConfigId="0ea672fc-0c93-4762-bff9-536959d70f87" sshConfig="deyanix@192.168.16.110:22 key" keyPair="true">
+        <fileTransfer rootFolder="/opt/smart-irrigation" accessType="SFTP" host="192.168.16.110" port="22" sshConfigId="0ea672fc-0c93-4762-bff9-536959d70f87" sshConfig="deyanix@192.168.16.110:22 key" keyPair="true">
           <advancedOptions>
-            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" isUseSudo="true" />
           </advancedOptions>
         </fileTransfer>
       </webServer>
