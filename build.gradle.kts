@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -5,15 +6,17 @@ plugins {
     id("io.spring.dependency-management") version "1.1.5"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.24"
+    kotlin("plugin.allopen") version "2.0.0"
+    kotlin("plugin.noarg") version "2.0.0"
 }
 
 group = "eu.deyanix.smartirrigation"
 version = "0.0.1-SNAPSHOT"
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "17"
+    compilerOptions  {
+        freeCompilerArgs.set(listOf("-Xjsr305=strict"))
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 
@@ -37,13 +40,22 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-autoconfigure-processor")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.integration:spring-integration-mqtt")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.postgresql:postgresql")
     implementation("com.pi4j:pi4j-core:2.6.0")
     implementation("com.pi4j:pi4j-plugin-gpiod:2.6.0")
     implementation("com.pi4j:pi4j-plugin-pigpio:2.6.0")
     implementation("com.pi4j:pi4j-plugin-linuxfs:2.6.0")
     implementation("com.pi4j:pi4j-plugin-raspberrypi:2.6.0")
+}
+
+allOpen {
+    annotations("jakarta.persistence.Entity", "jakarta.persistence.MappedSuperclass", "jakarta.persistence.Embedabble")
+}
+noArg {
+    annotations("jakarta.persistence.Entity", "jakarta.persistence.MappedSuperclass", "jakarta.persistence.Embedabble")
 }
