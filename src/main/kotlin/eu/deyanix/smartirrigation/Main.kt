@@ -1,5 +1,7 @@
 package eu.deyanix.smartirrigation
 
+import eu.deyanix.smartirrigation.configuration.GpioConfiguration
+import eu.deyanix.smartirrigation.configuration.SerialConfiguration
 import eu.deyanix.smartirrigation.configuration.TtnConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -7,7 +9,9 @@ import org.springframework.boot.runApplication
 
 @SpringBootApplication
 @EnableConfigurationProperties(
-	TtnConfiguration::class
+	TtnConfiguration::class,
+	SerialConfiguration::class,
+	GpioConfiguration::class,
 )
 class Main
 

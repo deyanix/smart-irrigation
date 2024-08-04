@@ -5,6 +5,7 @@ import org.bson.Document
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.core.MongoTemplate
@@ -20,20 +21,23 @@ import org.springframework.messaging.MessageHandler
 
 
 @Configuration
+@ConditionalOnProperty("application.ttn.enabled")
 class MqttConfigurator(
 	private val ttnConfiguration: TtnConfiguration,
 	private val mongo: MongoTemplate
 ) {
 	private final val logger: Logger = LoggerFactory.getLogger(MqttConfigurator::class.java)
 
-
 	@Bean
 	fun clientFactory(): MqttPahoClientFactory {
 		val options = MqttConnectOptions()
 		options.isCleanSession = true
+		options.connectionTimeout = 3000
+		options.maxReconnectDelay = 1000
+		options.isAutomaticReconnect = true
 		options.serverURIs = ttnConfiguration.mqttServers.toTypedArray()
 		options.userName = ttnConfiguration.mqttUsername
-		options.password = ttnConfiguration.mqttPassword.toCharArray()
+		options.password = ttnConfiguration.mqttPassword?.toCharArray()
 
 		val factory = DefaultMqttPahoClientFactory()
 		factory.connectionOptions = options
@@ -56,6 +60,7 @@ class MqttConfigurator(
 		adapter.setConverter(DefaultPahoMessageConverter())
 		adapter.setQos(0)
 		adapter.outputChannel = mqttInputChannel()
+
 		logger.info("Configured MQTT channel adapter")
 		return adapter
 	}

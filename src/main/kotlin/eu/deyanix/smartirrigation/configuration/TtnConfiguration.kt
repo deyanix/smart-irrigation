@@ -2,12 +2,13 @@ package eu.deyanix.smartirrigation.configuration
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-@ConfigurationProperties("ttn")
+@ConfigurationProperties("application.ttn")
 class TtnConfiguration {
-	lateinit var applicationId: String
+	var enabled: Boolean = false
+	var applicationId: String? = null
 	var tenantId: String = "ttn"
-	lateinit var mqttServers: List<String>
-	lateinit var mqttPassword: String
+	var mqttServers: List<String> = ArrayList()
+	var mqttPassword: String? = null
 
 	val mqttUsername: String
 		get() { return "$applicationId@$tenantId" }
