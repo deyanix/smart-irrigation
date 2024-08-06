@@ -10,7 +10,7 @@ data class InstallationSection(
 	var name: String,
 	var gpio: Int,
 	@ManyToOne
-	@JoinColumn(name="installation_id")
+	@JoinColumn
 	var installation: Installation,
 	var installationIndex: Int,
 )
