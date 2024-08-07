@@ -7,13 +7,13 @@ import java.time.LocalDateTime
 import java.util.stream.Stream
 
 interface IrrigationRepository : JpaRepository<Irrigation, Int> {
-	@Query("SELECT I FROM Irrigation I WHERE I.installationSection.installation.id = :installationId AND I.finished = false")
+	@Query("SELECT I FROM Irrigation I WHERE I.section.installation.id = :installationId AND I.finished = false")
 	fun findAllUnfinished(installationId: Int): Iterable<Irrigation>
 
 	@Query("SELECT I " +
 			"FROM Irrigation I " +
 			"WHERE " +
-			"	I.installationSection.installation.id = :installationId AND " +
+			"	I.section.installation.id = :installationId AND " +
 			"	(" +
 			"		(I.start >= :from AND I.start <= :to) OR" +
 			"		(I.end >= :from AND I.end <= :to)" +

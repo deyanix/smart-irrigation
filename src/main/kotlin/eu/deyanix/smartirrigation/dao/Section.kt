@@ -3,7 +3,7 @@ package eu.deyanix.smartirrigation.dao
 import jakarta.persistence.*
 
 @Entity
-data class InstallationSection(
+data class Section(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	var id: Int,
@@ -12,5 +12,5 @@ data class InstallationSection(
 	@ManyToOne
 	@JoinColumn
 	var installation: Installation,
-	var installationIndex: Int,
+	var index: Int,
 )

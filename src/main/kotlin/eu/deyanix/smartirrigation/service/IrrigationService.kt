@@ -1,7 +1,7 @@
 package eu.deyanix.smartirrigation.service
 
 import eu.deyanix.smartirrigation.dao.Irrigation
-import eu.deyanix.smartirrigation.dto.InstallationSectionSummaryDTO
+import eu.deyanix.smartirrigation.dto.SectionSummaryDTO
 import eu.deyanix.smartirrigation.repository.IrrigationRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,7 +18,7 @@ class IrrigationService(
 ) {
 	fun refresh(installationId: Int) {
 		irrigationRepository.findAllUnfinished(installationId)
-			.groupBy(Irrigation::installationSection)
+			.groupBy(Irrigation::section)
 			.forEach {(installationSection, irrigations) ->
 				val state = gpioService.getState(installationSection.gpio)
 				irrigations.forEach {
@@ -34,7 +34,7 @@ class IrrigationService(
 	}
 
 	@Transactional(readOnly = true)
-	fun summarize(installationId: Int, from: LocalDate, to: LocalDate): Iterable<InstallationSectionSummaryDTO> {
+	fun summarize(installationId: Int, from: LocalDate, to: LocalDate): Iterable<SectionSummaryDTO> {
 		val fromDateTime = from.atStartOfDay()
 		val toDateTime = to.atTime(LocalTime.MAX)
 
@@ -44,12 +44,12 @@ class IrrigationService(
 				it.end = it.end.minmax(fromDateTime, toDateTime)
 				it
 			}
-			.collect(Collectors.groupingBy { it.installationSection })
+			.collect(Collectors.groupingBy { it.section })
 			.map { (section, irrigations) ->
 				val totalDuration = irrigations
 					.map { Duration.between(it.start, it.end) }
 					.fold(Duration.ZERO, Duration::plus)
-				InstallationSectionSummaryDTO(section.id, section.name, totalDuration.toSeconds())
+				SectionSummaryDTO(section.id, section.name, totalDuration.toSeconds())
 			}
 	}
 }

@@ -1,6 +1,6 @@
 package eu.deyanix.smartirrigation.dto
 
-data class InstallationSectionSummaryDTO(
+data class SectionSummaryDTO(
 	val id: Int,
 	val name: String,
 	val duration: Long,

@@ -10,7 +10,7 @@ data class Irrigation(
 	var id: Int,
 	@ManyToOne
 	@JoinColumn
-	var installationSection: InstallationSection,
+	var section: Section,
 	var start: LocalDateTime = LocalDateTime.now(),
 	var end: LocalDateTime = LocalDateTime.now(),
 	var finished: Boolean = false,
