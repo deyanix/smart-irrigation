@@ -1,8 +1,8 @@
 package eu.deyanix.smartirrigation.controller
 
 import eu.deyanix.smartirrigation.dto.SectionListDTO
-import eu.deyanix.smartirrigation.dto.SectionWindowListDTO
-import eu.deyanix.smartirrigation.dto.SectionWindowOccurrenceDTO
+import eu.deyanix.smartirrigation.dto.SectionSlotListDTO
+import eu.deyanix.smartirrigation.dto.SectionSlotOccurrenceDTO
 import eu.deyanix.smartirrigation.service.SectionService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,12 +20,12 @@ class SectionController(
 	}
 
 	@GetMapping("/installations/{installationId}/sections/{sectionIndex}/windows")
-	fun getWindows(@PathVariable installationId: Int, @PathVariable sectionIndex: Int): List<SectionWindowListDTO> {
+	fun getSlots(@PathVariable installationId: Int, @PathVariable sectionIndex: Int): List<SectionSlotListDTO> {
 		return installationSectionService.getWindows(installationId, sectionIndex)
 	}
 
 	@GetMapping("/installations/{installationId}/sections/{sectionIndex}/windows/upcoming")
-	fun getUpcomingWindows(@PathVariable installationId: Int, @PathVariable sectionIndex: Int): List<SectionWindowOccurrenceDTO> {
+	fun getUpcomingSlots(@PathVariable installationId: Int, @PathVariable sectionIndex: Int): List<SectionSlotOccurrenceDTO> {
 		return installationSectionService.getUpcomingWindows(installationId, sectionIndex)
 	}
 }

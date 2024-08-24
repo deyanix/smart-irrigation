@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 data class Irrigation(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	var id: Int,
+	var id: Int? = null,
 	@ManyToOne
 	@JoinColumn
 	var section: Section,

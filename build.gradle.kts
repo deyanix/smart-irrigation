@@ -24,6 +24,10 @@ tasks.getByName<Jar>("jar") {
     enabled = false
 }
 
+tasks.test {
+    useJUnitPlatform()
+}
+
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
@@ -51,6 +55,9 @@ dependencies {
     implementation("com.pi4j:pi4j-plugin-pigpio:2.6.0")
     implementation("com.pi4j:pi4j-plugin-linuxfs:2.6.0")
     implementation("com.pi4j:pi4j-plugin-raspberrypi:2.6.0")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 }
 
 allOpen {

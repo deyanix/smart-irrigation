@@ -4,7 +4,7 @@ import jakarta.persistence.*
 import java.time.LocalTime
 
 @Entity
-data class SectionWindow(
+data class SectionSlot(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	var id: Int,
@@ -13,6 +13,6 @@ data class SectionWindow(
 	var section: Section,
 	var start: LocalTime,
 	var end: LocalTime,
-	@OneToMany(mappedBy = "sectionWindow")
-	var weekdays: MutableList<SectionWindowWeekday>,
+	@OneToMany(mappedBy = "sectionSlot")
+	var weekdays: MutableList<SectionSlotWeekday>,
 )
