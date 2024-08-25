@@ -3,11 +3,7 @@ package eu.deyanix.smartirrigation.controller
 import eu.deyanix.smartirrigation.dto.SectionSummaryDTO
 import eu.deyanix.smartirrigation.service.IrrigationService
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import java.util.*
 
@@ -16,9 +12,9 @@ import java.util.*
 class IrrigationController(
 	private val irrigationService: IrrigationService,
 ) {
-	@PostMapping("/installations/{installationId}/irrigations/refresh")
-	fun refresh(@PathVariable installationId: Int) {
-		irrigationService.refresh(installationId)
+	@PostMapping("/installations/all/irrigations/refresh")
+	fun refreshAll() {
+		irrigationService.refreshAll()
 	}
 
 	@GetMapping("/installations/{installationId}/irrigations/summary")

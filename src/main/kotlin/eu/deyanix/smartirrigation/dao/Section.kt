@@ -13,6 +13,4 @@ data class Section(
 	@JoinColumn
 	var installation: Installation,
 	var index: Int,
-	var minDroughtDurationHours: Int,
-	var maxDroughtDurationHours: Int,
 )

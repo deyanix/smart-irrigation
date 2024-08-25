@@ -3,8 +3,7 @@ package eu.deyanix.smartirrigation.service
 import eu.deyanix.smartirrigation.dao.Irrigation
 import eu.deyanix.smartirrigation.dto.SectionSummaryDTO
 import eu.deyanix.smartirrigation.repository.IrrigationRepository
-import eu.deyanix.smartirrigation.repository.SectionRepository
-import eu.deyanix.smartirrigation.utils.LocalDateTimeExtensions.minmax
+import eu.deyanix.smartirrigation.utils.LocalDateTimes
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
@@ -15,29 +14,16 @@ import java.util.stream.Collectors
 
 @Service
 class IrrigationService(
-	private val sectionRepository: SectionRepository,
 	private val irrigationRepository: IrrigationRepository,
-	private val gpioService: GpioService,
+	private val sectionValveService: SectionValveService,
 ) {
-	fun start(installationId: Int, sectionIndex: Int) {
-		val section = sectionRepository.findByIndex(installationId, sectionIndex)
-			.orElseThrow()
-
-		val irrigation = irrigationRepository.findUnfinishedBySection(section)
-			.orElseGet { Irrigation(section = section) }
-			.apply { end = LocalDateTime.now() }
-
-		irrigationRepository.saveAndFlush(irrigation)
-		gpioService.setState(section.gpio, true)
-	}
-
-	@Transactional(readOnly = true)
-	fun refresh(installationId: Int) {
-		irrigationRepository.findAllUnfinished(installationId)
-			.collect(Collectors.toList())
+	@Transactional
+	fun refreshAll() {
+		irrigationRepository.findAllUnfinished()
+			.toList()
 			.groupBy(Irrigation::section)
-			.forEach {(installationSection, irrigations) ->
-				val state = gpioService.getState(installationSection.gpio)
+			.forEach { (section, irrigations) ->
+				val state = sectionValveService.isOpen(section)
 				irrigations.forEach {
 					if (state) {
 						it.end = LocalDateTime.now()
@@ -57,8 +43,8 @@ class IrrigationService(
 
 		return irrigationRepository.findAllBetween(installationId, fromDateTime, toDateTime)
 			.map {
-				it.start = it.start.minmax(fromDateTime, toDateTime)
-				it.end = it.end.minmax(fromDateTime, toDateTime)
+				it.start = LocalDateTimes.minmax(it.start, fromDateTime, toDateTime)
+				it.end = LocalDateTimes.minmax(it.end, fromDateTime, toDateTime)
 				it
 			}
 			.collect(Collectors.groupingBy { it.section })

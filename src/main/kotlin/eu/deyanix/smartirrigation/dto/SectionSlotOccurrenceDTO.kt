@@ -1,5 +1,7 @@
 package eu.deyanix.smartirrigation.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import eu.deyanix.smartirrigation.utils.LocalTimeSpan
 import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -10,6 +12,9 @@ data class SectionSlotOccurrenceDTO(
 	val start: LocalDateTime,
 	val end: LocalDateTime,
 ) {
+	@JsonIgnore
+	val span = LocalTimeSpan(start, end)
+
 	class Builder(
 		private val weekday: DayOfWeek,
 		private val start: LocalTime,
