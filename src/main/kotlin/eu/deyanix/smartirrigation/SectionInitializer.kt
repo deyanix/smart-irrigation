@@ -12,11 +12,11 @@ class SectionInitializer(
 ) {
 	@PostConstruct
 	fun init() {
-		irrigationService.refreshAll()
+		irrigationService.synchronizeWithGpio()
 	}
 
 	@Scheduled(fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
 	fun reportCurrentTime() {
-		irrigationService.refreshAll()
+		irrigationService.synchronizeWithGpio()
 	}
 }

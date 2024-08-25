@@ -18,7 +18,7 @@ class IrrigationService(
 	private val sectionValveService: SectionValveService,
 ) {
 	@Transactional
-	fun refreshAll() {
+	fun synchronizeWithGpio() {
 		irrigationRepository.findAllUnfinished()
 			.toList()
 			.groupBy(Irrigation::section)

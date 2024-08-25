@@ -12,9 +12,9 @@ import java.util.*
 class IrrigationController(
 	private val irrigationService: IrrigationService,
 ) {
-	@PostMapping("/installations/all/irrigations/refresh")
+	@PostMapping("/installations/any/irrigations/refresh")
 	fun refreshAll() {
-		irrigationService.refreshAll()
+		irrigationService.synchronizeWithGpio()
 	}
 
 	@GetMapping("/installations/{installationId}/irrigations/summary")
