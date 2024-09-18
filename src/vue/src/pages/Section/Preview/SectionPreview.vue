@@ -20,6 +20,7 @@
         <AppCard>
           <div class="row q-col-gutter-md">
             <div class="col-12 col-md-3">
+              <!-- Najbliższe i ostatnie uruchomienie rozpisać tutaj + przekierowanie do dedykowanego widoku -->
               <q-item>
                 <q-item-section>
                   <q-item-label caption> Stan </q-item-label>
@@ -76,6 +77,7 @@
           </q-markup-table>
         </AppCard>
       </div>
+      <!-- Karta "Harmonogram" oraz "Zaplanowane" ("uruchomienie"/"wyłączenie") -->
       <div class="col-12 col-md-6">
         <AppCard>
           <AppCardHeader label="Harmonogram">

@@ -8,12 +8,14 @@ data class SectionSlotListDTO(
 	val id: Int,
 	val start: LocalTime,
 	val end: LocalTime,
-	val weekdays: List<Int>,
+	val weekdays: Array<Int>,
 ) {
 	constructor(sectionSlot: SectionSlot) : this(
-		id = sectionSlot.id,
+		id = sectionSlot.id!!,
 		start = sectionSlot.start,
 		end = sectionSlot.end,
-		weekdays = sectionSlot.weekdays.map(SectionSlotWeekday::weekday)
+		weekdays = sectionSlot.weekdays
+			.map(SectionSlotWeekday::weekday)
+			.toTypedArray()
 	)
 }

@@ -9,7 +9,7 @@ data class SectionSlotWeekday(
 	@Id
 	@ManyToOne
 	@JoinColumn
-	var sectionSlot: SectionSlot,
+	var sectionSlot: SectionSlot? = null,
 	@Id
 	var weekday: Int,
 ) {

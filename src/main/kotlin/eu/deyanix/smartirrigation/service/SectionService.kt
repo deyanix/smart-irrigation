@@ -4,7 +4,6 @@ import eu.deyanix.smartirrigation.dao.Irrigation
 import eu.deyanix.smartirrigation.dao.Section
 import eu.deyanix.smartirrigation.dto.IrrigationDTO
 import eu.deyanix.smartirrigation.dto.SectionDTO
-import eu.deyanix.smartirrigation.dto.SectionSlotListDTO
 import eu.deyanix.smartirrigation.dto.SectionSlotOccurrenceDTO
 import eu.deyanix.smartirrigation.repository.IrrigationRepository
 import eu.deyanix.smartirrigation.repository.SectionRepository
@@ -32,15 +31,6 @@ class SectionService(
 	fun getSections(installationId: Int): Stream<SectionDTO> =
 		sectionRepository.findAllByInstallation(installationId)
 			.map(this::convertSectionToDTO)
-
-	@Transactional(readOnly = true)
-	fun getSlots(installationId: Int, sectionIndex: Int): Stream<SectionSlotListDTO> {
-		val section = sectionRepository.findByIndex(installationId, sectionIndex)
-			.orElseThrow()
-
-		return sectionSlotRepository.findAllBySection(section)
-			.map(::SectionSlotListDTO)
-	}
 
 	@Transactional(readOnly = true)
 	fun getUpcomingSlots(installationId: Int, sectionIndex: Int): Stream<SectionSlotOccurrenceDTO> {

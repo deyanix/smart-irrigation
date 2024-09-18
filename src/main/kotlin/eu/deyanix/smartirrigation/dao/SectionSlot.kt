@@ -7,12 +7,12 @@ import java.time.LocalTime
 data class SectionSlot(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	var id: Int,
+	var id: Int? = null,
 	@ManyToOne
 	@JoinColumn
 	var section: Section,
 	var start: LocalTime,
 	var end: LocalTime,
-	@OneToMany(mappedBy = "sectionSlot")
-	var weekdays: MutableList<SectionSlotWeekday>,
+	@OneToMany(mappedBy = "sectionSlot", cascade = [CascadeType.ALL], orphanRemoval = true)
+	var weekdays: MutableList<SectionSlotWeekday> = mutableListOf(),
 )

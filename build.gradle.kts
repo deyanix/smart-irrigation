@@ -6,8 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.5"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.24"
-    kotlin("plugin.allopen") version "2.0.0"
-    kotlin("plugin.noarg") version "2.0.0"
+    kotlin("plugin.jpa") version "1.9.24"
 }
 
 group = "eu.deyanix.smartirrigation"
@@ -58,11 +57,4 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
-}
-
-allOpen {
-    annotations("jakarta.persistence.Entity", "jakarta.persistence.MappedSuperclass", "jakarta.persistence.Embeddable")
-}
-noArg {
-    annotations("jakarta.persistence.Entity", "jakarta.persistence.MappedSuperclass", "jakarta.persistence.Embeddable")
 }
