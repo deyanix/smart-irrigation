@@ -1,24 +1,21 @@
 package eu.deyanix.smartirrigation.controller
 
-import eu.deyanix.smartirrigation.dto.SectionSummaryDTO
 import eu.deyanix.smartirrigation.service.IrrigationService
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.web.bind.annotation.*
-import java.time.LocalDate
-import java.util.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RestController
 
-@Tag(name = "Installation")
+@Tag(name = "Section Irrigation")
 @RestController
 class IrrigationController(
 	private val irrigationService: IrrigationService,
 ) {
-	@PostMapping("/installations/any/irrigations/refresh")
-	fun refreshAll() {
-		irrigationService.synchronizeWithGpio()
-	}
+	@GetMapping("/installations/{installationId}/sections/{sectionIndex}/irrigations/upcoming")
+	fun getUpcomingIrrigations(@PathVariable installationId: Int, @PathVariable sectionIndex: Int) =
+		irrigationService.getUpcomingIrrigations(installationId, sectionIndex).toList()
 
-	@GetMapping("/installations/{installationId}/irrigations/summary")
-	fun summarize(@PathVariable installationId: Int, @RequestParam from: Optional<LocalDate>, @RequestParam to: Optional<LocalDate>): Iterable<SectionSummaryDTO> {
-		return irrigationService.summarize(installationId, from.orElse(LocalDate.now()), to.orElse(LocalDate.now()))
-	}
+	@GetMapping("/installations/{installationId}/sections/{sectionIndex}/irrigations/current")
+	fun getCurrentIrrigations(@PathVariable installationId: Int, @PathVariable sectionIndex: Int) =
+		irrigationService.getCurrentIrrigations(installationId, sectionIndex).toList()
 }

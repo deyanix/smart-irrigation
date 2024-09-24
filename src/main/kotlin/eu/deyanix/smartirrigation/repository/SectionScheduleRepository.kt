@@ -11,12 +11,15 @@ import java.util.stream.Stream
 
 interface SectionScheduleRepository : JpaRepository<SectionSchedule, Int> {
 	@Query("SELECT SS FROM SectionSchedule SS " +
-			"WHERE (CAST(:dateFrom AS TIMESTAMP) IS NULL OR SS.start >= :dateFrom) " +
-			"AND (CAST(:dateTo AS TIMESTAMP) IS NULL OR SS.end <= :dateTo) " +
-			"AND SS.section.installation.id = :installationId " +
-			"AND SS.section.index = :sectionIndex ")
-	fun findAllByCriteria(installationId: Int, sectionIndex: Int, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, pageable: Pageable): Page<SectionSchedule>
+			"WHERE (CAST(:dateFrom AS TIMESTAMP) IS NULL OR SS.start >= :dateFrom OR SS.end >= :dateFrom) " +
+			"AND (CAST(:dateTo AS TIMESTAMP) IS NULL OR SS.start <= :dateTo OR SS.end <= :dateTo) " +
+			"AND SS.section = :section")
+	fun findPageBySectionBetween(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, pageable: Pageable): Page<SectionSchedule>
 
-	@Query("SELECT SS FROM SectionSchedule SS WHERE SS.section = :section AND (SS.start < :until OR SS.end < :until)")
-	fun findAllBySectionUntil(section: Section, until: LocalDateTime): Stream<SectionSchedule>
+	@Query("SELECT SS FROM SectionSchedule SS " +
+			"WHERE (CAST(:dateFrom AS TIMESTAMP) IS NULL OR SS.start >= :dateFrom OR SS.end >= :dateFrom) " +
+			"AND (CAST(:dateTo AS TIMESTAMP) IS NULL OR SS.start <= :dateTo OR SS.end <= :dateTo) " +
+			"AND (:state IS NULL OR SS.state = :state) " +
+			"AND SS.section = :section")
+	fun findAllBySectionBetween(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, state: Boolean?): Stream<SectionSchedule>
 }

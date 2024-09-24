@@ -9,8 +9,8 @@ import java.util.*
 import java.util.stream.Stream
 
 interface IrrigationRepository : JpaRepository<Irrigation, Int> {
-	@Query("SELECT I FROM Irrigation I WHERE I.finished = false")
-	fun findAllUnfinished(): Stream<Irrigation>
+	@Query("SELECT I FROM Irrigation I WHERE I.section = :section AND I.finished = false")
+	fun findAllUnfinishedBySection(section: Section): Stream<Irrigation>
 
 	@Query("SELECT I FROM Irrigation I WHERE I.section = :section AND I.finished = false ORDER BY I.end DESC LIMIT 1")
 	fun findUnfinishedBySection(section: Section): Optional<Irrigation>

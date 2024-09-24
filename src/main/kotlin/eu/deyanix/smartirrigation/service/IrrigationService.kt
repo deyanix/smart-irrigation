@@ -1,62 +1,139 @@
 package eu.deyanix.smartirrigation.service
 
 import eu.deyanix.smartirrigation.dao.Irrigation
-import eu.deyanix.smartirrigation.dto.SectionSummaryDTO
+import eu.deyanix.smartirrigation.dao.Section
+import eu.deyanix.smartirrigation.dto.IrrigationSpan
+import eu.deyanix.smartirrigation.dto.IrrigationSpans
 import eu.deyanix.smartirrigation.repository.IrrigationRepository
-import eu.deyanix.smartirrigation.utils.LocalDateTimes
+import eu.deyanix.smartirrigation.repository.SectionRepository
+import eu.deyanix.smartirrigation.repository.SectionScheduleRepository
+import eu.deyanix.smartirrigation.repository.SectionSlotRepository
+import eu.deyanix.smartirrigation.utils.LocalTimeSpan
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.Duration
-import java.time.LocalDate
+import java.time.DayOfWeek
 import java.time.LocalDateTime
-import java.time.LocalTime
-import java.util.stream.Collectors
 
 @Service
 class IrrigationService(
 	private val irrigationRepository: IrrigationRepository,
 	private val sectionValveService: SectionValveService,
+	private val sectionRepository: SectionRepository,
+	private val sectionScheduleRepository: SectionScheduleRepository,
+	private val sectionSlotRepository: SectionSlotRepository,
 ) {
-	@Transactional
-	fun synchronizeWithGpio() {
-		irrigationRepository.findAllUnfinished()
-			.toList()
-			.groupBy(Irrigation::section)
-			.forEach { (section, irrigations) ->
-				val state = sectionValveService.isOpen(section)
-				irrigations.forEach {
-					if (state) {
-						it.end = LocalDateTime.now()
-					} else {
-						it.finished = true
-					}
-				}
-				irrigationRepository.saveAll(irrigations)
+	fun getSlotSpans(section: Section, dateFrom: LocalDateTime) =
+		sectionSlotRepository.findAllBySection(section)
+			.flatMap { slot ->
+				val builder = IrrigationSpan.Builder(
+					start = slot.start,
+					end = slot.end,
+					state = true,
+				)
+
+				return@flatMap slot.weekdays
+					.stream()
+					.map { builder.next(dateFrom, DayOfWeek.of(it.weekday)) }
 			}
-		irrigationRepository.flush()
+			.toList()
+
+	@Transactional
+	fun getScheduleSpans(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, state: Boolean?) =
+		sectionScheduleRepository.findAllBySectionBetween(section, dateFrom, dateTo, state)
+			.map {
+				IrrigationSpan(
+					span = LocalTimeSpan(start = it.start, end = it.end),
+					state = it.state,
+				)
+			}
+			.toList()
+
+	@Transactional(readOnly = true)
+	fun getUpcomingIrrigations(section: Section): List<LocalTimeSpan> {
+		val now = LocalDateTime.now()
+
+		val sectionSlotSpans = IrrigationSpans.of(
+			getSlotSpans(section, now))
+
+		val schedulePositiveSpans = IrrigationSpans.of(
+			getScheduleSpans(section, sectionSlotSpans.minTime(), sectionSlotSpans.maxTime(), true))
+
+		val allPositiveSpans = IrrigationSpans.flat(listOf(sectionSlotSpans, schedulePositiveSpans))
+
+		val scheduleNegativeSpans = IrrigationSpans.of(
+			getScheduleSpans(section, allPositiveSpans.minTime(), allPositiveSpans.maxTime(), false))
+
+		val mergedSpans = IrrigationSpans.flat(listOf(allPositiveSpans, scheduleNegativeSpans))
+		if (mergedSpans.state) {
+			return mergedSpans.spans
+				.sortedBy { it.start }
+		}
+		return emptyList()
 	}
 
 	@Transactional(readOnly = true)
-	fun summarize(installationId: Int, from: LocalDate, to: LocalDate): Iterable<SectionSummaryDTO> {
-		val fromDateTime = from.atStartOfDay()
-		val toDateTime = to.atTime(LocalTime.MAX)
+	fun getUpcomingIrrigations(installationId: Int, sectionIndex: Int): List<LocalTimeSpan> {
+		return getUpcomingIrrigations(sectionRepository.findByIndex(installationId, sectionIndex).orElseThrow())
+	}
 
-		return irrigationRepository.findAllBetween(installationId, fromDateTime, toDateTime)
-			.map {
-				it.start = LocalDateTimes.minmax(it.start, fromDateTime, toDateTime)
-				it.end = LocalDateTimes.minmax(it.end, fromDateTime, toDateTime)
-				it
+	@Transactional(readOnly = true)
+	fun getCurrentIrrigations(section: Section): List<LocalTimeSpan> {
+		val now = LocalDateTime.now()
+		return getUpcomingIrrigations(section)
+			.filter { span -> span.isBetween(now) }
+	}
+
+	@Transactional(readOnly = true)
+	fun getCurrentIrrigations(installationId: Int, sectionIndex: Int): List<LocalTimeSpan> {
+		return getCurrentIrrigations(sectionRepository.findByIndex(installationId, sectionIndex).orElseThrow())
+	}
+
+	fun start(section: Section) {
+		sectionValveService.setOpen(section, true)
+
+		val irrigations = irrigationRepository.findAllUnfinishedBySection(section).toList().toMutableList()
+		if (irrigations.any()) {
+			irrigations.forEach { it.finished = true }
+		} else {
+			irrigations.add(Irrigation(section = section))
+		}
+
+		irrigations.first().apply {
+			finished = false
+			end = LocalDateTime.now()
+		}
+
+		irrigationRepository.saveAllAndFlush(irrigations)
+	}
+
+	fun stop(section: Section) {
+		sectionValveService.setOpen(section, false)
+		val irrigations = irrigationRepository.findAllUnfinishedBySection(section).toList()
+		irrigations.forEach { it.finished = true }
+
+		irrigationRepository.saveAllAndFlush(irrigations)
+	}
+
+	@Transactional
+	fun resetWithGpio() {
+		sectionRepository.findAll()
+			.forEach { section ->
+				sectionValveService.setOpen(section, false)
+				stop(section)
 			}
-			.collect(Collectors.groupingBy { it.section })
-			.map { (section, irrigations) ->
-				val totalDuration = irrigations
-					.map { Duration.between(it.start, it.end) }
-					.fold(Duration.ZERO, Duration::plus)
+	}
 
-				return@map SectionSummaryDTO(
-					id = section.id,
-					name = section.name,
-					durationSeconds = totalDuration.toSeconds())
+	@Transactional
+	fun synchronizeWithGpio() {
+		sectionRepository.findAll()
+			.forEach { section ->
+				val shouldState = getCurrentIrrigations(section).any()
+
+				if (shouldState) {
+					start(section)
+				} else {
+					stop(section)
+				}
 			}
 	}
 }

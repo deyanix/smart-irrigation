@@ -12,7 +12,7 @@ class SectionInitializer(
 ) {
 	@PostConstruct
 	fun init() {
-		irrigationService.synchronizeWithGpio()
+		irrigationService.resetWithGpio()
 	}
 
 	@Scheduled(fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
