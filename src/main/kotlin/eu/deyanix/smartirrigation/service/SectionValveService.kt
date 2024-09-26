@@ -11,5 +11,5 @@ class SectionValveService(
 		gpioService.setState(section.gpio, !irrigating)
 
 	fun isOpen(section: Section): Boolean =
-		gpioService.getState(section.gpio)
+		!gpioService.getState(section.gpio)
 }

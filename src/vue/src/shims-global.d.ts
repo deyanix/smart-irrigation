@@ -10,6 +10,7 @@ import AppDialogWrapper from 'components/AppDialog/AppDialogWrapper.vue';
 import AppDialogHeader from './components/AppDialog/AppDialogHeader.vue';
 import AppDialogSection from 'components/AppDialog/AppDialogSection.vue';
 import AppDialogActions from 'components/AppDialog/AppDialogActions.vue';
+import AppDateTimeInput from 'components/AppInput/AppDateTimeInput.vue';
 
 declare module 'vue' {
   export interface GlobalComponents {
@@ -28,5 +29,7 @@ declare module 'vue' {
     AppDialogHeader: typeof AppDialogHeader;
     AppDialogSection: typeof AppDialogSection;
     AppDialogActions: typeof AppDialogActions;
+
+    AppDateTimeInput: typeof AppDateTimeInput;
   }
 }

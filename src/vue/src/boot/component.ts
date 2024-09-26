@@ -11,6 +11,7 @@ import AppDialogHeader from 'src/components/AppDialog/AppDialogHeader.vue';
 import AppDialogWrapper from 'components/AppDialog/AppDialogWrapper.vue';
 import AppDialogSection from 'components/AppDialog/AppDialogSection.vue';
 import AppDialogActions from 'components/AppDialog/AppDialogActions.vue';
+import AppDateTimeInput from 'components/AppInput/AppDateTimeInput.vue';
 
 export default boot(({ app }) => {
   app.component('AppBreadcrumbs', AppBreadcrumbs);
@@ -28,4 +29,6 @@ export default boot(({ app }) => {
   app.component('AppDialogHeader', AppDialogHeader);
   app.component('AppDialogSection', AppDialogSection);
   app.component('AppDialogActions', AppDialogActions);
+
+  app.component('AppDateTimeInput', AppDateTimeInput);
 });

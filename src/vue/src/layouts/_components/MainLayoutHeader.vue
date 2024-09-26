@@ -14,16 +14,23 @@
         <img src="~/assets/logo.png" alt="Logo" />
         <q-separator vertical class="q-mx-md" />
         <q-select
-          model-value="Instalacja 1"
+          v-model="installationStore.currentInstallation"
           borderless
           dense
-          :options="['Instalacja 1', 'Instalacja 2']"
+          :options="installationStore.installations"
+          option-value="id"
+          option-label="name"
+          map-options
         />
       </q-toolbar-title>
     </q-toolbar>
   </q-header>
 </template>
 <script setup lang="ts">
+import { useInstallationStore } from 'stores/installation';
+
+const installationStore = useInstallationStore();
+
 const drawer = defineModel<boolean>('drawer');
 </script>
 <style lang="scss">

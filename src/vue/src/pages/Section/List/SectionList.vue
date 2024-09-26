@@ -20,6 +20,11 @@
     </AppPageHeader>
 
     <q-table :columns="columns" :rows="rows" flat bordered>
+      <template #body-cell-status="props">
+        <q-td :props="props">
+          <StatusIndicator :active="props.row.irrigating" />
+        </q-td>
+      </template>
       <template #body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -39,15 +44,35 @@
         </q-td>
       </template>
     </q-table>
+
+    <div class="row q-gutter-sm">
+      <q-btn
+        v-for="weekday in ['pn', 'wt', 'śr', 'cz', 'pt', 'so', 'nd']"
+        :key="weekday"
+        :label="weekday"
+        unelevated
+        round
+        :color="'primary'"
+      />
+    </div>
   </q-page>
 </template>
 <script setup lang="ts">
 import { useSectionColumns } from 'pages/Section/List/_composables/useSectionColumns';
+import StatusIndicator from 'components/Status/StatusIndicator.vue';
+import { SectionModel, useSectionService } from 'src/api/Section';
+import { onBeforeMount, ref } from 'vue';
+
+const { getSections } = useSectionService();
 
 const columns = useSectionColumns();
-const rows = [
-  { name: 'Sekcja 1', description: 'Obok altanki', active: true },
-  { name: 'Sekcja 2', description: 'Obok altanki', active: false },
-  { name: 'Sekcja 3', description: 'Obok altanki', active: false },
-];
+const rows = ref<SectionModel[]>([]);
+
+async function fetchTable() {
+  rows.value = await getSections();
+}
+
+onBeforeMount(async () => {
+  await fetchTable();
+});
 </script>

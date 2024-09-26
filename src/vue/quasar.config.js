@@ -2,7 +2,7 @@ const { configure } = require('quasar/wrappers');
 
 module.exports = configure(function (/* ctx */) {
   return {
-    boot: ['axios', 'component'],
+    boot: ['axios', 'component', 'app'],
     css: ['app.scss'],
     extras: ['mdi-v7', 'roboto-font-latin-ext', 'material-icons'],
     build: {

@@ -111,6 +111,12 @@
 <script setup lang="ts">
 import { Dialog } from 'quasar';
 import SectionStartDialog from '../_dialogs/SectionStartDialog.vue';
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
+
+const $route = useRoute();
+
+const sectionIndex = computed(() => parseInt($route.params.id as string));
 
 function onStop() {
   Dialog.create({
@@ -121,6 +127,9 @@ function onStop() {
 function onStart() {
   Dialog.create({
     component: SectionStartDialog,
+    componentProps: {
+      sectionIndex: sectionIndex.value,
+    },
   });
 }
 </script>
