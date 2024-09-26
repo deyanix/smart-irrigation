@@ -16,43 +16,8 @@
       </template>
     </AppPageHeader>
     <div class="row q-col-gutter-md">
-      <div class="col-12">
-        <AppCard>
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-3">
-              <!-- Najbliższe i ostatnie uruchomienie rozpisać tutaj + przekierowanie do dedykowanego widoku -->
-              <q-item>
-                <q-item-section>
-                  <q-item-label caption> Stan </q-item-label>
-                  <q-item-label>Wyłączony</q-item-label>
-                </q-item-section>
-              </q-item>
-            </div>
-          </div>
-        </AppCard>
-      </div>
       <div class="col-12 col-md-6">
-        <AppCard>
-          <AppCardHeader label="Najbliższe uruchomienia">
-            <template #append>
-              <q-btn icon="chevron_right" flat round dense />
-            </template>
-          </AppCardHeader>
-          <q-markup-table>
-            <tbody>
-              <tr>
-                <td>2024-09-18 12:11</td>
-                <td>12 minut</td>
-                <td>Automatycznie</td>
-              </tr>
-              <tr>
-                <td>2024-09-18 12:11</td>
-                <td>12 minut</td>
-                <td>Ręcznie</td>
-              </tr>
-            </tbody>
-          </q-markup-table>
-        </AppCard>
+        <SectionNearestIrrigations :section-id="sectionId" />
       </div>
       <div class="col-12 col-md-6">
         <AppCard>
@@ -79,31 +44,7 @@
       </div>
       <!-- Karta "Harmonogram" oraz "Zaplanowane" ("uruchomienie"/"wyłączenie") -->
       <div class="col-12 col-md-6">
-        <AppCard>
-          <AppCardHeader label="Harmonogram">
-            <template #append>
-              <q-btn icon="add" flat round dense />
-            </template>
-          </AppCardHeader>
-          <q-markup-table>
-            <tbody>
-              <tr>
-                <td>codziennie</td>
-                <td>9:15 - 9:30</td>
-                <td class="text-right">
-                  <q-btn icon="edit" flat round dense />
-                </td>
-              </tr>
-              <tr>
-                <td>pn, wt, śr, sb, nd</td>
-                <td>9:15 - 9:30</td>
-                <td class="text-right">
-                  <q-btn icon="edit" flat round dense />
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
-        </AppCard>
+        <SectionSlots :section-id="sectionId" />
       </div>
     </div>
   </q-page>
@@ -113,10 +54,12 @@ import { Dialog } from 'quasar';
 import SectionStartDialog from '../_dialogs/SectionStartDialog.vue';
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
+import SectionSlots from './_components/SectionSlots.vue';
+import SectionNearestIrrigations from 'pages/Section/Preview/_components/SectionNearestIrrigations.vue';
 
 const $route = useRoute();
 
-const sectionIndex = computed(() => parseInt($route.params.id as string));
+const sectionId = computed(() => parseInt($route.params.id as string));
 
 function onStop() {
   Dialog.create({
@@ -128,7 +71,7 @@ function onStart() {
   Dialog.create({
     component: SectionStartDialog,
     componentProps: {
-      sectionIndex: sectionIndex.value,
+      sectionId: sectionId.value,
     },
   });
 }

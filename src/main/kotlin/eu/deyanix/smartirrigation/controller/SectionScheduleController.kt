@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*
 class SectionScheduleController(
 	private val sectionScheduleService: SectionScheduleService,
 ) {
-	@GetMapping("/installations/{installationId}/sections/{sectionIndex}/schedules")
-	fun search(@PathVariable installationId: Int, @PathVariable sectionIndex: Int, @ParameterObject criteria: SectionScheduleCriteria) =
-		sectionScheduleService.search(installationId, sectionIndex, criteria)
+	@GetMapping("/installations/any/sections/{sectionId}/schedules")
+	fun search(@PathVariable sectionId: Int, @ParameterObject criteria: SectionScheduleCriteria) =
+		sectionScheduleService.search(sectionId, criteria)
 
-	@PostMapping("/installations/{installationId}/sections/{sectionIndex}/schedules")
-	fun create(@PathVariable installationId: Int, @PathVariable sectionIndex: Int, @RequestBody data: SectionScheduleRequest) =
-		sectionScheduleService.create(installationId, sectionIndex, data)
+	@PostMapping("/installations/any/sections/{sectionId}/schedules")
+	fun create(@PathVariable sectionId: Int, @RequestBody data: SectionScheduleRequest) =
+		sectionScheduleService.create(sectionId, data)
 
 	@DeleteMapping("/installations/any/sections/any/schedules/{scheduleId}")
 	fun delete(@PathVariable scheduleId: Int) =

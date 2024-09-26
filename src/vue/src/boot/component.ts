@@ -12,6 +12,7 @@ import AppDialogWrapper from 'components/AppDialog/AppDialogWrapper.vue';
 import AppDialogSection from 'components/AppDialog/AppDialogSection.vue';
 import AppDialogActions from 'components/AppDialog/AppDialogActions.vue';
 import AppDateTimeInput from 'components/AppInput/AppDateTimeInput.vue';
+import AppWeekday from 'components/AppInput/AppWeekday.vue';
 
 export default boot(({ app }) => {
   app.component('AppBreadcrumbs', AppBreadcrumbs);
@@ -31,4 +32,5 @@ export default boot(({ app }) => {
   app.component('AppDialogActions', AppDialogActions);
 
   app.component('AppDateTimeInput', AppDateTimeInput);
+  app.component('AppWeekday', AppWeekday);
 });

@@ -44,32 +44,22 @@
         </q-td>
       </template>
     </q-table>
-
-    <div class="row q-gutter-sm">
-      <q-btn
-        v-for="weekday in ['pn', 'wt', 'śr', 'cz', 'pt', 'so', 'nd']"
-        :key="weekday"
-        :label="weekday"
-        unelevated
-        round
-        :color="'primary'"
-      />
-    </div>
   </q-page>
 </template>
 <script setup lang="ts">
 import { useSectionColumns } from 'pages/Section/List/_composables/useSectionColumns';
 import StatusIndicator from 'components/Status/StatusIndicator.vue';
-import { SectionModel, useSectionService } from 'src/api/Section';
+import { SectionModel, SectionService } from 'src/api/Section';
 import { onBeforeMount, ref } from 'vue';
+import { useInstallationId } from 'src/composables/useInstallationId';
 
-const { getSections } = useSectionService();
+const installationId = useInstallationId();
 
 const columns = useSectionColumns();
 const rows = ref<SectionModel[]>([]);
 
 async function fetchTable() {
-  rows.value = await getSections();
+  rows.value = await SectionService.getSections(installationId.value);
 }
 
 onBeforeMount(async () => {

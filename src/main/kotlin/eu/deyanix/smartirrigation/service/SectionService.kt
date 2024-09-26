@@ -22,8 +22,8 @@ class SectionService(
 			.map(this::convertSectionToDTO)
 
 	@Transactional(readOnly = true)
-	fun getIrrigations(installationId: Int, sectionIndex: Int): Stream<IrrigationDTO> {
-		val section = sectionRepository.findByIndex(installationId, sectionIndex)
+	fun getIrrigations(sectionId: Int): Stream<IrrigationDTO> {
+		val section = sectionRepository.findById(sectionId)
 			.orElseThrow()
 
 		return irrigationRepository.findAllBetweenBySection(section, LocalDateTime.now().minusDays(1), LocalDateTime.now())

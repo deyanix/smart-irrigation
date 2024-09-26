@@ -15,8 +15,8 @@ class SectionSlotService(
 	private val sectionRepository: SectionRepository,
 ) {
 	@Transactional(readOnly = true)
-	fun getList(installationId: Int, sectionIndex: Int): Stream<SectionSlotListDTO> {
-		val section = sectionRepository.findByIndex(installationId, sectionIndex)
+	fun getList(sectionId: Int): Stream<SectionSlotListDTO> {
+		val section = sectionRepository.findById(sectionId)
 			.orElseThrow()
 
 		return sectionSlotRepository.findAllBySection(section)
@@ -24,8 +24,8 @@ class SectionSlotService(
 	}
 
 	@Transactional
-	fun create(installationId: Int, sectionIndex: Int, request: SectionSlotRequest) {
-		val section = sectionRepository.findByIndex(installationId, sectionIndex)
+	fun create(sectionId: Int, request: SectionSlotRequest) {
+		val section = sectionRepository.findById(sectionId)
 			.orElseThrow()
 
 		val slot = SectionSlot(

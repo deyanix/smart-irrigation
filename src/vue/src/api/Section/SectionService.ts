@@ -1,16 +1,9 @@
-import { SectionModel } from 'src/api/Section/SectionTypes';
+import { SectionModel } from './SectionTypes';
 import { api } from 'boot/axios';
-import { useInstallationId } from 'src/composables/useInstallationId';
 
-export function useSectionService() {
-  const installationId = useInstallationId();
-
-  return {
-    async getSections(): Promise<SectionModel[]> {
-      const response = await api.get(
-        `/installations/${installationId.value}/sections`
-      );
-      return response.data;
-    },
-  };
-}
+export const SectionService = {
+  async getSections(installationId: number): Promise<SectionModel[]> {
+    const response = await api.get(`/installations/${installationId}/sections`);
+    return response.data;
+  },
+};

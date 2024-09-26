@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController
 class IrrigationController(
 	private val irrigationService: IrrigationService,
 ) {
-	@GetMapping("/installations/{installationId}/sections/{sectionIndex}/irrigations/upcoming")
-	fun getUpcomingIrrigations(@PathVariable installationId: Int, @PathVariable sectionIndex: Int) =
-		irrigationService.getUpcomingIrrigations(installationId, sectionIndex).toList()
+	@GetMapping("/installations/any/sections/{sectionId}/irrigations/upcoming")
+	fun getUpcomingIrrigations(@PathVariable sectionId: Int) =
+		irrigationService.getUpcomingIrrigations(sectionId).toList()
 
-	@GetMapping("/installations/{installationId}/sections/{sectionIndex}/irrigations/current")
-	fun getCurrentIrrigations(@PathVariable installationId: Int, @PathVariable sectionIndex: Int) =
-		irrigationService.getCurrentIrrigations(installationId, sectionIndex).toList()
+	@GetMapping("/installations/any/sections/{sectionId}/irrigations/current")
+	fun getCurrentIrrigations(@PathVariable sectionId: Int) =
+		irrigationService.getCurrentIrrigations(sectionId).toList()
 }

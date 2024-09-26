@@ -30,10 +30,10 @@ class IrrigationSpans(
 	}
 
 	fun minTime() =
-		spans.minOf { it.start }.toLocalDate().atTime(LocalTime.MIN)
+		spans.minOfOrNull { it.start }?.toLocalDate()?.atTime(LocalTime.MIN)
 
 	fun maxTime() =
-		spans.maxOf { it.end }.toLocalDate().atTime(LocalTime.MAX)
+		spans.maxOfOrNull { it.end }?.toLocalDate()?.atTime(LocalTime.MAX)
 
 	fun merge(other: IrrigationSpans): IrrigationSpans {
 		val newSpans = spans.stream()

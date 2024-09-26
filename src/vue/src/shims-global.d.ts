@@ -11,6 +11,7 @@ import AppDialogHeader from './components/AppDialog/AppDialogHeader.vue';
 import AppDialogSection from 'components/AppDialog/AppDialogSection.vue';
 import AppDialogActions from 'components/AppDialog/AppDialogActions.vue';
 import AppDateTimeInput from 'components/AppInput/AppDateTimeInput.vue';
+import AppWeekday from 'components/AppInput/AppWeekday.vue';
 
 declare module 'vue' {
   export interface GlobalComponents {
@@ -31,5 +32,6 @@ declare module 'vue' {
     AppDialogActions: typeof AppDialogActions;
 
     AppDateTimeInput: typeof AppDateTimeInput;
+    AppWeekday: typeof AppWeekday;
   }
 }

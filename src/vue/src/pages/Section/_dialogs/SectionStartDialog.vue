@@ -98,13 +98,13 @@ import {
 } from 'pages/Section/_dialogs/_types/DurationOptions';
 import { useAppValidation } from 'src/composables/useAppValidation';
 import dayjs from 'dayjs';
-import { useSectionScheduleService } from 'src/api/SectionSchedule/SectionScheduleService';
+import { SectionScheduleService } from 'src/api/SectionSchedule/SectionScheduleService';
 
 const { dialogRef, onDialogOK } = useDialogPluginComponent();
 const { requireRule } = useAppValidation();
 
 const props = defineProps<{
-  sectionIndex: number;
+  sectionId: number;
 }>();
 
 const showAdvanced = ref<boolean>(false);
@@ -174,7 +174,7 @@ function onSubmit() {
 
   loading.value = true;
   try {
-    useSectionScheduleService().create(props.sectionIndex, {
+    SectionScheduleService.create(props.sectionId, {
       start: start,
       end: end,
       state: true,

@@ -1,5 +1,1 @@
-export interface SectionScheduleUpdate {
-  start: Date;
-  end: Date;
-  state: boolean;
-}
+export * from './SectionScheduleService';

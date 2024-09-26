@@ -1,16 +1,8 @@
-import { SectionScheduleUpdate } from 'src/api/SectionSchedule/index';
 import { api } from 'boot/axios';
-import { useInstallationId } from 'src/composables/useInstallationId';
+import { SectionScheduleUpdate } from './SectionScheduleTypes';
 
-export function useSectionScheduleService() {
-  const installationId = useInstallationId();
-
-  return {
-    async create(sectionIndex: number, data: SectionScheduleUpdate) {
-      await api.post(
-        `/installations/${installationId.value}/sections/${sectionIndex}/schedules`,
-        data
-      );
-    },
-  };
-}
+export const SectionScheduleService = {
+  async create(sectionId: number, data: SectionScheduleUpdate) {
+    await api.post(`/installations/any/sections/${sectionId}/schedules`, data);
+  },
+};

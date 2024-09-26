@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
-@Tag(name = "Installation")
+@Tag(name = "Section")
 @RestController
 class SectionController(
 	private val sectionService: SectionService,
@@ -18,8 +18,8 @@ class SectionController(
 		sectionService.getSections(installationId)
 			.toList()
 
-	@GetMapping("/installations/{installationId}/sections/{sectionIndex}/irrigations")
-	fun getIrrigations(@PathVariable installationId: Int, @PathVariable sectionIndex: Int): List<IrrigationDTO> =
-		sectionService.getIrrigations(installationId, sectionIndex)
+	@GetMapping("/installations/any/sections/{sectionId}/irrigations")
+	fun getIrrigations(@PathVariable sectionId: Int): List<IrrigationDTO> =
+		sectionService.getIrrigations(sectionId)
 			.toList()
 }

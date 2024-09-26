@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.DayOfWeek
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Service
 class IrrigationService(
@@ -51,17 +52,27 @@ class IrrigationService(
 	@Transactional(readOnly = true)
 	fun getUpcomingIrrigations(section: Section): List<LocalTimeSpan> {
 		val now = LocalDateTime.now()
+		val localMin = now.minusDays(1).with(LocalTime.MIN)
+		val localMax = now.plusDays(7).with(LocalTime.MAX)
 
 		val sectionSlotSpans = IrrigationSpans.of(
 			getSlotSpans(section, now))
 
 		val schedulePositiveSpans = IrrigationSpans.of(
-			getScheduleSpans(section, sectionSlotSpans.minTime(), sectionSlotSpans.maxTime(), true))
+			getScheduleSpans(
+				section,
+				listOfNotNull(sectionSlotSpans.minTime(), localMin).min(),
+				listOfNotNull(sectionSlotSpans.maxTime(), localMax).max(),
+				true))
 
 		val allPositiveSpans = IrrigationSpans.flat(listOf(sectionSlotSpans, schedulePositiveSpans))
 
 		val scheduleNegativeSpans = IrrigationSpans.of(
-			getScheduleSpans(section, allPositiveSpans.minTime(), allPositiveSpans.maxTime(), false))
+			getScheduleSpans(
+				section,
+				listOfNotNull(allPositiveSpans.minTime(), localMin).min(),
+				listOfNotNull(allPositiveSpans.maxTime(), localMax).max(),
+				false))
 
 		val mergedSpans = IrrigationSpans.flat(listOf(allPositiveSpans, scheduleNegativeSpans))
 		if (mergedSpans.state) {
@@ -72,8 +83,8 @@ class IrrigationService(
 	}
 
 	@Transactional(readOnly = true)
-	fun getUpcomingIrrigations(installationId: Int, sectionIndex: Int): List<LocalTimeSpan> {
-		return getUpcomingIrrigations(sectionRepository.findByIndex(installationId, sectionIndex).orElseThrow())
+	fun getUpcomingIrrigations(sectionId: Int): List<LocalTimeSpan> {
+		return getUpcomingIrrigations(sectionRepository.findById(sectionId).orElseThrow())
 	}
 
 	@Transactional(readOnly = true)
@@ -84,8 +95,8 @@ class IrrigationService(
 	}
 
 	@Transactional(readOnly = true)
-	fun getCurrentIrrigations(installationId: Int, sectionIndex: Int): List<LocalTimeSpan> {
-		return getCurrentIrrigations(sectionRepository.findByIndex(installationId, sectionIndex).orElseThrow())
+	fun getCurrentIrrigations(sectionId: Int): List<LocalTimeSpan> {
+		return getCurrentIrrigations(sectionRepository.findById(sectionId).orElseThrow())
 	}
 
 	fun start(section: Section) {

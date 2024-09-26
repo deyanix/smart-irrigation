@@ -14,9 +14,10 @@ class SectionScheduleService(
 	private val sectionScheduleRepository: SectionScheduleRepository,
 	private val sectionRepository: SectionRepository
 ) {
-	fun search(installationId: Int, sectionIndex: Int, criteria: SectionScheduleCriteria): SearchResponse<SectionSchedule> {
-		val section = sectionRepository.findByIndex(installationId, sectionIndex)
+	fun search(sectionId: Int, criteria: SectionScheduleCriteria): SearchResponse<SectionSchedule> {
+		val section = sectionRepository.findById(sectionId)
 			.orElseThrow()
+
 		val result = sectionScheduleRepository.findPageBySectionBetween(
 			section,
 			criteria.from,
@@ -26,8 +27,8 @@ class SectionScheduleService(
 		return SearchResponse(result)
 	}
 
-	fun create(installationId: Int, sectionIndex: Int, request: SectionScheduleRequest) {
-		val section = sectionRepository.findByIndex(installationId, sectionIndex)
+	fun create(sectionId: Int, request: SectionScheduleRequest) {
+		val section = sectionRepository.findById(sectionId)
 			.orElseThrow()
 
 		val schedule = SectionSchedule(

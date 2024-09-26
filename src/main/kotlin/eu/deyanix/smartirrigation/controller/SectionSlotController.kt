@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController
 class SectionSlotController(
 	private val sectionSlotService: SectionSlotService,
 ) {
-	@GetMapping("/installations/{installationId}/sections/{sectionIndex}/slots")
-	fun getList(@PathVariable installationId: Int, @PathVariable sectionIndex: Int) =
-		sectionSlotService.getList(installationId, sectionIndex)
+	@GetMapping("/installations/any/sections/{sectionId}/slots")
+	fun getList(@PathVariable sectionId: Int) =
+		sectionSlotService.getList(sectionId)
 
-	@PostMapping("/installations/{installationId}/sections/{sectionIndex}/slots")
-	fun create(@PathVariable installationId: Int, @PathVariable sectionIndex: Int, @RequestBody data: SectionSlotRequest) =
-		sectionSlotService.create(installationId, sectionIndex, data)
+	@PostMapping("/installations/any/sections/{sectionId}/slots")
+	fun create(@PathVariable sectionId: Int, @RequestBody data: SectionSlotRequest) =
+		sectionSlotService.create(sectionId, data)
 
 	@PutMapping("/installations/any/sections/any/slots/{slotId}")
-	fun create(@PathVariable slotId: Int, @RequestBody data: SectionSlotRequest) =
+	fun update(@PathVariable slotId: Int, @RequestBody data: SectionSlotRequest) =
 		sectionSlotService.update(slotId, data)
 
 	@DeleteMapping("/installations/any/sections/any/slots/{slotId}")
