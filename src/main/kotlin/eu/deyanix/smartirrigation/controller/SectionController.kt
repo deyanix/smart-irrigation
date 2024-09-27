@@ -13,8 +13,12 @@ import org.springframework.web.bind.annotation.RestController
 class SectionController(
 	private val sectionService: SectionService,
 ) {
+	@GetMapping("/installations/any/sections/{sectionId}")
+	fun getSections(@PathVariable sectionId: Int): SectionDTO =
+		sectionService.getSection(sectionId)
+
 	@GetMapping("/installations/{installationId}/sections")
-	fun getList(@PathVariable installationId: Int): List<SectionDTO> =
+	fun getSection(@PathVariable installationId: Int): List<SectionDTO> =
 		sectionService.getSections(installationId)
 			.toList()
 

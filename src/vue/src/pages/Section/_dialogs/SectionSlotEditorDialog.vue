@@ -10,7 +10,6 @@
                 v-model="model.start"
                 mode="time"
                 label="Od"
-                :disable="loading"
                 :rules="[requireRule()]"
               />
             </div>
@@ -19,34 +18,23 @@
                 v-model="model.end"
                 mode="time"
                 label="Do"
-                :disable="loading"
                 :rules="[requireRule()]"
               />
             </div>
             <div class="col-12">
-              <AppWeekday v-model="model.weekdays" :disable="loading" />
+              <AppWeekday v-model="model.weekdays" />
             </div>
           </div>
         </AppDialogSection>
         <AppDialogActions>
-          <q-btn label="Anuluj" flat rounded v-close-popup :disable="loading" />
-          <q-btn
-            v-if="editMode"
-            label="Usuń"
-            flat
-            rounded
-            @click="onDelete"
-            :disable="loading"
-            :loading="deleteLoading"
-          />
+          <q-btn label="Anuluj" flat rounded v-close-popup />
+          <q-btn v-if="editMode" label="Usuń" flat rounded @click="onDelete" />
           <q-btn
             type="submit"
             label="Zapisz"
             color="primary"
             rounded
             unelevated
-            :disable="loading"
-            :loading="submitLoading"
           />
         </AppDialogActions>
       </q-form>
@@ -54,7 +42,7 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { useDialogPluginComponent } from 'quasar';
+import { Loading, useDialogPluginComponent } from 'quasar';
 import { computed, ref } from 'vue';
 import {
   SectionSlotModel,
@@ -62,45 +50,48 @@ import {
   SectionSlotUpdate,
 } from 'src/api/SectionSlot';
 import { useAppValidation } from 'src/composables/useAppValidation';
+import { SectionModel } from 'src/api/Section';
 
 const { dialogRef, onDialogOK } = useDialogPluginComponent();
 const { requireRule } = useAppValidation();
 
 const props = defineProps<{
-  sectionId?: number;
+  section: SectionModel;
   slot: SectionSlotModel | SectionSlotUpdate;
 }>();
 
 const model = ref<SectionSlotUpdate>(props.slot);
 const editMode = computed(() => SectionSlotService.isModel(props.slot));
 
-const submitLoading = ref<boolean>(false);
-const deleteLoading = ref<boolean>(false);
-const loading = computed(() => submitLoading.value || deleteLoading.value);
-
 async function onDelete() {
-  deleteLoading.value = true;
+  Loading.show({
+    group: 'SectionSlotEditorDialog-delete',
+    message: 'Usuwanie harmonogramu...',
+  });
   try {
     if (SectionSlotService.isModel(props.slot)) {
       await SectionSlotService.delete(props.slot.id);
     }
     onDialogOK();
   } finally {
-    submitLoading.value = false;
+    Loading.hide('SectionSlotEditorDialog-delete');
   }
 }
 
 async function onSubmit() {
-  submitLoading.value = true;
+  Loading.show({
+    group: 'SectionSlotEditorDialog-submit',
+    message: 'Zapisywanie harmonogramu...',
+  });
   try {
     if (SectionSlotService.isModel(props.slot)) {
       await SectionSlotService.update(props.slot.id, model.value);
-    } else if (props.sectionId) {
-      await SectionSlotService.create(props.sectionId, model.value);
+    } else {
+      await SectionSlotService.create(props.section.id, model.value);
     }
     onDialogOK();
   } finally {
-    submitLoading.value = false;
+    Loading.hide('SectionSlotEditorDialog-submit');
   }
 }
 </script>

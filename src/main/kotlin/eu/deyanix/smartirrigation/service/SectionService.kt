@@ -17,6 +17,12 @@ class SectionService(
 	private val irrigationRepository: IrrigationRepository,
 ) {
 	@Transactional(readOnly = true)
+	fun getSection(sectionId: Int): SectionDTO =
+		sectionRepository.findById(sectionId)
+			.map(this::convertSectionToDTO)
+			.orElseThrow()
+
+	@Transactional(readOnly = true)
 	fun getSections(installationId: Int): Stream<SectionDTO> =
 		sectionRepository.findAllByInstallation(installationId)
 			.map(this::convertSectionToDTO)

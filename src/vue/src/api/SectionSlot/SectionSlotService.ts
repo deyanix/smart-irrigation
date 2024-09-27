@@ -17,7 +17,7 @@ export const SectionSlotService = {
   isModel(data: SectionSlotUpdate): data is SectionSlotModel {
     return 'id' in data && isNumber(data.id);
   },
-  async getList(sectionId: number): Promise<SectionSlotModel[]> {
+  async getSlots(sectionId: number): Promise<SectionSlotModel[]> {
     const response = await api.get(
       `/installations/any/sections/${sectionId}/slots`
     );

@@ -39,7 +39,7 @@
             round
             dense
             icon="chevron_right"
-            :to="{ name: 'SectionPreview', params: { id: 1 } }"
+            :to="{ name: 'SectionPreview', params: { id: props.row.id } }"
           />
         </q-td>
       </template>

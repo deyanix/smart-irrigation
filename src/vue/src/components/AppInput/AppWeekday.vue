@@ -10,7 +10,6 @@
         :model-value="isSelected(weekday)"
         dense
         @update:model-value="toggleSelected(weekday)"
-        :disable="disable"
       />
     </div>
   </div>
@@ -22,8 +21,6 @@ import { toggle } from 'radashi';
 const model = defineModel<number[]>({
   required: true,
 });
-
-defineProps<{ disable: boolean }>();
 
 function isSelected(weekday: DayOfWeek): boolean {
   return model.value.includes(weekday.nativeValue);

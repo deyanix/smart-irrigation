@@ -23,7 +23,7 @@
       </tbody>
     </q-markup-table>
     <q-card-section v-else class="text-center">
-      Nie zdefiniowanego harmonogramu
+      Brak zdefiniowanego harmonogramu
     </q-card-section>
   </AppCard>
 </template>
@@ -31,37 +31,29 @@
 import { Dialog } from 'quasar';
 import SectionSlotEditorDialog from 'pages/Section/_dialogs/SectionSlotEditorDialog.vue';
 import { SectionSlotModel, SectionSlotService } from 'src/api/SectionSlot';
-import { onBeforeMount, ref } from 'vue';
 import { FormationUtilities } from 'src/utilities/FormationUtilities';
 import { cloneDeep } from 'radashi';
+import { useSectionPreviewStore } from 'pages/Section/Preview/_composables/useSectionPreviewStore';
 
-const props = defineProps<{ sectionId: number }>();
-
-const slots = ref<SectionSlotModel[]>([]);
+const { section, slots, fetchStore } = useSectionPreviewStore();
 
 function onCreate() {
   Dialog.create({
     component: SectionSlotEditorDialog,
     componentProps: {
-      sectionId: props.sectionId,
+      section: section.value,
       slot: SectionSlotService.createEmptyUpdate(),
     },
-  }).onOk(() => fetchSlots());
+  }).onOk(() => fetchStore());
 }
 
 function onUpdate(slot: SectionSlotModel) {
   Dialog.create({
     component: SectionSlotEditorDialog,
     componentProps: {
-      sectionId: props.sectionId,
+      section: section.value,
       slot: cloneDeep(slot),
     },
-  }).onOk(() => fetchSlots());
+  }).onOk(() => fetchStore());
 }
-
-async function fetchSlots(): Promise<void> {
-  slots.value = await SectionSlotService.getList(props.sectionId);
-}
-
-onBeforeMount(() => fetchSlots());
 </script>

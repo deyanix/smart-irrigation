@@ -6,4 +6,8 @@ export const SectionService = {
     const response = await api.get(`/installations/${installationId}/sections`);
     return response.data;
   },
+  async getSection(sectionId: number): Promise<SectionModel> {
+    const response = await api.get(`/installations/any/sections/${sectionId}`);
+    return response.data;
+  },
 };

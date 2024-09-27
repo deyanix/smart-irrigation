@@ -17,34 +17,13 @@
     </AppPageHeader>
     <div class="row q-col-gutter-md">
       <div class="col-12 col-md-6">
-        <SectionNearestIrrigations :section-id="sectionId" />
+        <SectionNearestIrrigations />
       </div>
       <div class="col-12 col-md-6">
-        <AppCard>
-          <AppCardHeader label="Ostatnie uruchomienia">
-            <template #append>
-              <q-btn icon="chevron_right" flat round dense />
-            </template>
-          </AppCardHeader>
-          <q-markup-table>
-            <tbody>
-              <tr>
-                <td>2024-09-18 12:11</td>
-                <td>12 minut</td>
-                <td>Automatycznie</td>
-              </tr>
-              <tr>
-                <td>2024-09-18 12:11</td>
-                <td>12 minut</td>
-                <td>Ręcznie</td>
-              </tr>
-            </tbody>
-          </q-markup-table>
-        </AppCard>
+        <SectionLastIrrigations />
       </div>
-      <!-- Karta "Harmonogram" oraz "Zaplanowane" ("uruchomienie"/"wyłączenie") -->
       <div class="col-12 col-md-6">
-        <SectionSlots :section-id="sectionId" />
+        <SectionSlots />
       </div>
     </div>
   </q-page>
@@ -56,15 +35,18 @@ import { useRoute } from 'vue-router';
 import { computed } from 'vue';
 import SectionSlots from './_components/SectionSlots.vue';
 import SectionNearestIrrigations from 'pages/Section/Preview/_components/SectionNearestIrrigations.vue';
+import { defineSectionPreviewStore } from 'pages/Section/Preview/_composables/useSectionPreviewStore';
+import SectionLastIrrigations from 'pages/Section/Preview/_components/SectionLastIrrigations.vue';
 
 const $route = useRoute();
 
 const sectionId = computed(() => parseInt($route.params.id as string));
+const { fetchStore } = defineSectionPreviewStore(sectionId);
 
 function onStop() {
   Dialog.create({
     component: SectionStartDialog,
-  });
+  }).onOk(() => fetchStore());
 }
 
 function onStart() {
@@ -73,6 +55,6 @@ function onStart() {
     componentProps: {
       sectionId: sectionId.value,
     },
-  });
+  }).onOk(() => fetchStore());
 }
 </script>
