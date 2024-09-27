@@ -61,7 +61,7 @@ class IrrigationService(
 				listOfNotNull(sectionSlotSpans.maxTime(), localMax).max(),
 				true))
 
-		val allPositiveSpans = IrrigationSpans.flat(listOf(sectionSlotSpans, schedulePositiveSpans))
+		val allPositiveSpans = IrrigationSpans.flatten(listOf(sectionSlotSpans, schedulePositiveSpans))
 
 		val scheduleNegativeSpans = IrrigationSpans.of(
 			getScheduleSpans(
@@ -70,7 +70,7 @@ class IrrigationService(
 				listOfNotNull(allPositiveSpans.maxTime(), localMax).max(),
 				false))
 
-		val mergedSpans = IrrigationSpans.flat(listOf(allPositiveSpans, scheduleNegativeSpans))
+		val mergedSpans = IrrigationSpans.flatten(listOf(allPositiveSpans, scheduleNegativeSpans))
 		if (mergedSpans.state) {
 			return mergedSpans.spans
 				.sortedBy { it.start }

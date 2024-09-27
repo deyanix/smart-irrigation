@@ -12,11 +12,12 @@ class IrrigationSpans(
 		fun empty(state: Boolean = true) =
 			 IrrigationSpans(spans = emptyList(), state = state)
 
-		fun flat(spans: List<IrrigationSpans>): IrrigationSpans {
+		fun flatten(spans: List<IrrigationSpans>): IrrigationSpans {
 			return spans
 				.groupBy { it.state }
 				.map { IrrigationSpans(it.value.flatMap { it.spans }, it.key) }
 				.reduceOrNull { s1, s2 -> s1.merge(s2) }
+				?.flatten()
 				?: empty()
 		}
 
@@ -25,6 +26,7 @@ class IrrigationSpans(
 				.groupBy { it.state }
 				.map { IrrigationSpans(it.value.map { it.span }, it.key) }
 				.reduceOrNull { s1, s2 -> s1.merge(s2) }
+				?.flatten()
 				?: empty()
 		}
 	}
@@ -52,6 +54,13 @@ class IrrigationSpans(
 					}
 			}
 			.toList()
+
+
+		return IrrigationSpans(spans = newSpans, state = state)
+	}
+
+	fun flatten(): IrrigationSpans {
+		val newSpans = spans
 			.sortedBy { it.start }
 			.fold(mutableListOf<LocalTimeSpan>()) { consolidated, next ->
 				if (consolidated.isEmpty()) {
