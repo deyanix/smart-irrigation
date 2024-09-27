@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import { Loading, useDialogPluginComponent } from 'quasar';
 import { SectionScheduleService } from 'src/api/SectionSchedule/SectionScheduleService';
-import { SectionModel } from 'src/api/Section';
+import { SectionModel, SectionService } from 'src/api/Section';
 import { ref } from 'vue';
 import { SectionScheduleUpdate } from 'src/api/SectionSchedule/SectionScheduleTypes';
 import SectionScheduleEditor from 'pages/Section/_components/SectionScheduleEditor.vue';
@@ -67,7 +67,11 @@ async function onSubmit() {
     message: 'Ustawianie harmonogramu...',
   });
   try {
-    await SectionScheduleService.create(props.section.id, model.value);
+    if (stopOnlyCurrent.value) {
+      await SectionService.stop(props.section.id);
+    } else {
+      await SectionScheduleService.create(props.section.id, model.value);
+    }
     onDialogOK();
   } finally {
     Loading.hide('SectionStartDialog-submit');

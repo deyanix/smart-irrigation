@@ -10,4 +10,7 @@ export const SectionService = {
     const response = await api.get(`/installations/any/sections/${sectionId}`);
     return response.data;
   },
+  async stop(sectionId: number): Promise<void> {
+    await api.post(`/installations/any/sections/${sectionId}/stop`);
+  },
 };

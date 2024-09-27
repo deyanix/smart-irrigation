@@ -1,6 +1,7 @@
 package eu.deyanix.smartirrigation.dto
 
 import eu.deyanix.smartirrigation.utils.LocalTimeSpan
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.*
 
@@ -81,5 +82,25 @@ class IrrigationSpans(
 			}
 
 		return IrrigationSpans(spans = newSpans, state = state)
+	}
+
+	fun onlyWhen(date: LocalDateTime): IrrigationSpans {
+		val newSpans = spans
+			.filter { it.isBetween(date) }
+
+		return IrrigationSpans(spans = newSpans, state = state)
+	}
+
+	fun onlyWhen(dateFrom: LocalDateTime, dateTo: LocalDateTime): IrrigationSpans {
+		val criteriaSpan = LocalTimeSpan(dateFrom, dateTo)
+		val newSpans = spans
+			.filter { it.isOverlap(criteriaSpan) }
+
+		return IrrigationSpans(spans = newSpans, state = state)
+	}
+
+	fun smash(): List<IrrigationSpan> {
+		return spans
+			.map { IrrigationSpan(it, state) }
 	}
 }

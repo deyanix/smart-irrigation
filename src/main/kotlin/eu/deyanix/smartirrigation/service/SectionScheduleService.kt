@@ -1,19 +1,18 @@
 package eu.deyanix.smartirrigation.service
 
 import eu.deyanix.smartirrigation.dao.SectionSchedule
-import eu.deyanix.smartirrigation.dto.SearchResponse
-import eu.deyanix.smartirrigation.dto.SectionScheduleCriteria
-import eu.deyanix.smartirrigation.dto.SectionScheduleRequest
+import eu.deyanix.smartirrigation.dto.*
 import eu.deyanix.smartirrigation.repository.SectionRepository
 import eu.deyanix.smartirrigation.repository.SectionScheduleRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class SectionScheduleService(
 	private val sectionScheduleRepository: SectionScheduleRepository,
 	private val sectionRepository: SectionRepository,
-	private val sectionService: SectionService
+	private val sectionValveService: SectionValveService,
 ) {
 	fun search(sectionId: Int, criteria: SectionScheduleCriteria): SearchResponse<SectionSchedule> {
 		val section = sectionRepository.findById(sectionId)
@@ -28,6 +27,7 @@ class SectionScheduleService(
 		return SearchResponse(result)
 	}
 
+	@Transactional
 	fun create(sectionId: Int, request: SectionScheduleRequest) {
 		val section = sectionRepository.findById(sectionId)
 			.orElseThrow()
@@ -39,8 +39,9 @@ class SectionScheduleService(
 			state = request.state,
 		)
 
+		ensureSchedule(schedule)
 		sectionScheduleRepository.saveAndFlush(schedule)
-		sectionService.synchronizeGpio(section)
+		sectionValveService.synchronizeGpio(section)
 	}
 
 	fun delete(scheduleId: Int) {
@@ -48,6 +49,14 @@ class SectionScheduleService(
 			.orElseThrow()
 
 		sectionScheduleRepository.delete(schedule)
-		sectionService.synchronizeGpio(schedule.section)
+		sectionValveService.synchronizeGpio(schedule.section)
+	}
+
+	@Transactional
+	fun ensureSchedule(schedule: SectionSchedule) {
+		val schedules = sectionScheduleRepository
+			.findAllBySectionInTime(schedule.section, schedule.start, schedule.end, !schedule.state)
+			.toList()
+		sectionScheduleRepository.deleteAll(schedules)
 	}
 }

@@ -13,7 +13,7 @@ import java.util.stream.Stream
 class SectionSlotService(
 	private val sectionSlotRepository: SectionSlotRepository,
 	private val sectionRepository: SectionRepository,
-	private val sectionService: SectionService,
+	private val sectionValveService: SectionValveService,
 ) {
 	@Transactional(readOnly = true)
 	fun getList(sectionId: Int): Stream<SectionSlotListDTO> {
@@ -37,7 +37,7 @@ class SectionSlotService(
 
 		request.applyTo(slot)
 		sectionSlotRepository.saveAndFlush(slot)
-		sectionService.synchronizeGpio(section)
+		sectionValveService.synchronizeGpio(section)
 	}
 
 	@Transactional
@@ -47,7 +47,7 @@ class SectionSlotService(
 
 		request.applyTo(slot)
 		sectionSlotRepository.saveAndFlush(slot)
-		sectionService.synchronizeGpio(slot.section)
+		sectionValveService.synchronizeGpio(slot.section)
 	}
 
 	@Transactional
@@ -56,6 +56,6 @@ class SectionSlotService(
 			.orElseThrow()
 
 		sectionSlotRepository.delete(slot)
-		sectionService.synchronizeGpio(slot.section)
+		sectionValveService.synchronizeGpio(slot.section)
 	}
 }

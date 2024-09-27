@@ -6,6 +6,7 @@ import eu.deyanix.smartirrigation.service.SectionService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "Section")
@@ -22,8 +23,7 @@ class SectionController(
 		sectionService.getSections(installationId)
 			.toList()
 
-	@GetMapping("/installations/any/sections/{sectionId}/irrigations")
-	fun getIrrigations(@PathVariable sectionId: Int): List<IrrigationDTO> =
-		sectionService.getIrrigations(sectionId)
-			.toList()
+	@PostMapping("/installations/any/sections/{sectionId}/stop")
+	fun stop(@PathVariable sectionId: Int) =
+		sectionService.stop(sectionId)
 }

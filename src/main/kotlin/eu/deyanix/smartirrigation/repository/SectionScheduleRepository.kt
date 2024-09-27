@@ -23,4 +23,11 @@ interface SectionScheduleRepository : JpaRepository<SectionSchedule, Int> {
 			"AND (:state IS NULL OR SS.state = :state) " +
 			"AND SS.section = :section")
 	fun findAllBySectionBetween(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, state: Boolean?): Stream<SectionSchedule>
+
+	@Query("SELECT SS FROM SectionSchedule SS " +
+			"WHERE (CAST(:dateFrom AS TIMESTAMP) IS NULL OR (SS.start <= :dateFrom AND SS.end >= :dateFrom)) " +
+			"AND (CAST(:dateTo AS TIMESTAMP) IS NULL OR (SS.start <= :dateTo AND SS.end >= :dateTo)) " +
+			"AND (:state IS NULL OR SS.state = :state) " +
+			"AND SS.section = :section")
+	fun findAllBySectionInTime(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, state: Boolean?): Stream<SectionSchedule>
 }
