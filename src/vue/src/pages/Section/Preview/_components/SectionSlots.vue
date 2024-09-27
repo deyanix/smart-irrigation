@@ -1,6 +1,6 @@
 <template>
   <AppCard>
-    <AppCardHeader label="Harmonogram">
+    <AppCardHeader label="Harmonogram tygodniowy">
       <template #append>
         <q-btn icon="add" flat round dense @click="onCreate" />
       </template>
@@ -23,7 +23,7 @@
       </tbody>
     </q-markup-table>
     <q-card-section v-else class="text-center">
-      Brak zdefiniowanego harmonogramu
+      Brak harmonogramu tygodniowego
     </q-card-section>
   </AppCard>
 </template>

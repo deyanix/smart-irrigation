@@ -6,7 +6,9 @@
           <AppBreadcrumbsEl :to="{ name: 'SectionList' }">
             Sekcje
           </AppBreadcrumbsEl>
-          <AppBreadcrumbsEl> Sekcja 1 </AppBreadcrumbsEl>
+          <AppBreadcrumbsEl :loading="!section">
+            {{ section?.name }}
+          </AppBreadcrumbsEl>
         </AppBreadcrumbs>
       </template>
       <template #actions>
@@ -25,6 +27,9 @@
       <div class="col-12 col-md-6">
         <SectionSlots />
       </div>
+      <div class="col-12 col-md-6">
+        <SectionSchedules />
+      </div>
     </div>
   </q-page>
 </template>
@@ -37,11 +42,12 @@ import SectionSlots from './_components/SectionSlots.vue';
 import SectionNearestIrrigations from 'pages/Section/Preview/_components/SectionNearestIrrigations.vue';
 import { defineSectionPreviewStore } from 'pages/Section/Preview/_composables/useSectionPreviewStore';
 import SectionLastIrrigations from 'pages/Section/Preview/_components/SectionLastIrrigations.vue';
+import SectionSchedules from 'pages/Section/Preview/_components/SectionSchedules.vue';
 
 const $route = useRoute();
 
 const sectionId = computed(() => parseInt($route.params.id as string));
-const { fetchStore } = defineSectionPreviewStore(sectionId);
+const { section, fetchStore } = defineSectionPreviewStore(sectionId);
 
 function onStop() {
   Dialog.create({

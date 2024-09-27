@@ -13,7 +13,8 @@ interface SectionScheduleRepository : JpaRepository<SectionSchedule, Int> {
 	@Query("SELECT SS FROM SectionSchedule SS " +
 			"WHERE (CAST(:dateFrom AS TIMESTAMP) IS NULL OR SS.start >= :dateFrom OR SS.end >= :dateFrom) " +
 			"AND (CAST(:dateTo AS TIMESTAMP) IS NULL OR SS.start <= :dateTo OR SS.end <= :dateTo) " +
-			"AND SS.section = :section")
+			"AND SS.section = :section " +
+			"ORDER BY SS.start")
 	fun findPageBySectionBetween(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, pageable: Pageable): Page<SectionSchedule>
 
 	@Query("SELECT SS FROM SectionSchedule SS " +

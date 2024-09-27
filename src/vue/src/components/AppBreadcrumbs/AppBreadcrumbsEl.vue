@@ -1,6 +1,7 @@
 <template>
   <q-breadcrumbs-el v-bind="$props" class="app-breadcrumbs-el">
-    <slot />
+    <q-spinner v-if="loading" />
+    <slot v-else />
   </q-breadcrumbs-el>
 </template>
 <script setup lang="ts">
@@ -9,7 +10,7 @@ import { QBreadcrumbsElProps } from 'quasar';
 defineOptions({
   name: 'QBreadcrumbsEl',
 });
-defineProps<QBreadcrumbsElProps>();
+defineProps<QBreadcrumbsElProps & { loading?: boolean }>();
 </script>
 <style lang="scss">
 .app-breadcrumbs-el {

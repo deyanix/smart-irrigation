@@ -89,7 +89,7 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { useDialogPluginComponent } from 'quasar';
+import { Loading, useDialogPluginComponent } from 'quasar';
 import { computed, ref, watch } from 'vue';
 import {
   DurationOption,
@@ -167,21 +167,24 @@ watch(
   { immediate: true }
 );
 
-function onSubmit() {
+async function onSubmit() {
   const start = dateFrom.value;
   const end = dateTo.value;
   if (!start || !end) return;
 
-  loading.value = true;
+  Loading.show({
+    group: 'SectionStartDialog-submit',
+    message: 'Ustawianie harmonogramu...',
+  });
   try {
-    SectionScheduleService.create(props.sectionId, {
+    await SectionScheduleService.create(props.sectionId, {
       start: start,
       end: end,
       state: true,
     });
     onDialogOK();
   } finally {
-    loading.value = false;
+    Loading.hide('SectionStartDialog-submit');
   }
 }
 </script>

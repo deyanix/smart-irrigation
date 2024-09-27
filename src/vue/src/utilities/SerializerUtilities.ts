@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { get, isEmpty, isString, set } from 'radashi';
 import { mapToDayOfWeeks, mapToNativeDayOfWeeks } from './_types/DayOfWeeks';
+import { AppSearchResponse } from 'src/utilities/ApiUtilities';
 
 export type SerializerFieldType = 'date' | 'datetime' | 'time' | 'weekdays';
 
@@ -50,6 +51,15 @@ export const SerializerUtilities = {
   ): Data[] {
     return data.map((el) => this.deserialize(el, declaration));
   },
+  deserializeSearch<Data extends object>(
+    data: AppSearchResponse<Data>,
+    declaration: SerializerDeclaration<Data>
+  ): AppSearchResponse<Data> {
+    return {
+      ...data,
+      rows: this.deserializeArray(data.rows, declaration),
+    };
+  },
   serialize<Data extends object>(
     data: Data,
     declaration: SerializerDeclaration<Data>
@@ -68,7 +78,7 @@ export const SerializerUtilities = {
             result = set(
               result,
               path,
-              dayjs(value).format("YYYY-MM-DD'T'HH:mm.SSS'Z'")
+              dayjs(value).format('YYYY-MM-DDTHH:mm:ss')
             );
           }
           break;

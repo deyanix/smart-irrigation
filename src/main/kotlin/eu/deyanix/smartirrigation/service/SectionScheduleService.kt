@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service
 @Service
 class SectionScheduleService(
 	private val sectionScheduleRepository: SectionScheduleRepository,
-	private val sectionRepository: SectionRepository
+	private val sectionRepository: SectionRepository,
+	private val sectionService: SectionService
 ) {
 	fun search(sectionId: Int, criteria: SectionScheduleCriteria): SearchResponse<SectionSchedule> {
 		val section = sectionRepository.findById(sectionId)
@@ -39,9 +40,14 @@ class SectionScheduleService(
 		)
 
 		sectionScheduleRepository.saveAndFlush(schedule)
+		sectionService.synchronizeGpio(section)
 	}
 
 	fun delete(scheduleId: Int) {
-		sectionScheduleRepository.deleteById(scheduleId)
+		val schedule = sectionScheduleRepository.findById(scheduleId)
+			.orElseThrow()
+
+		sectionScheduleRepository.delete(schedule)
+		sectionService.synchronizeGpio(schedule.section)
 	}
 }

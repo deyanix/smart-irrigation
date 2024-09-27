@@ -1,10 +1,8 @@
 package eu.deyanix.smartirrigation.service
 
-import eu.deyanix.smartirrigation.dao.Irrigation
 import eu.deyanix.smartirrigation.dao.Section
 import eu.deyanix.smartirrigation.dto.IrrigationSpan
 import eu.deyanix.smartirrigation.dto.IrrigationSpans
-import eu.deyanix.smartirrigation.repository.IrrigationRepository
 import eu.deyanix.smartirrigation.repository.SectionRepository
 import eu.deyanix.smartirrigation.repository.SectionScheduleRepository
 import eu.deyanix.smartirrigation.repository.SectionSlotRepository
@@ -17,13 +15,11 @@ import java.time.LocalTime
 
 @Service
 class IrrigationService(
-	private val irrigationRepository: IrrigationRepository,
-	private val sectionValveService: SectionValveService,
 	private val sectionRepository: SectionRepository,
 	private val sectionScheduleRepository: SectionScheduleRepository,
 	private val sectionSlotRepository: SectionSlotRepository,
 ) {
-	fun getSlotSpans(section: Section, dateFrom: LocalDateTime) =
+	fun getSlotSpans(section: Section, dateFrom: LocalDateTime): MutableList<IrrigationSpan> =
 		sectionSlotRepository.findAllBySection(section)
 			.flatMap { slot ->
 				val builder = IrrigationSpan.Builder(
@@ -39,7 +35,7 @@ class IrrigationService(
 			.toList()
 
 	@Transactional
-	fun getScheduleSpans(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, state: Boolean?) =
+	fun getScheduleSpans(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, state: Boolean?): MutableList<IrrigationSpan> =
 		sectionScheduleRepository.findAllBySectionBetween(section, dateFrom, dateTo, state)
 			.map {
 				IrrigationSpan(
@@ -97,55 +93,6 @@ class IrrigationService(
 	@Transactional(readOnly = true)
 	fun getCurrentIrrigations(sectionId: Int): List<LocalTimeSpan> {
 		return getCurrentIrrigations(sectionRepository.findById(sectionId).orElseThrow())
-	}
-
-	fun start(section: Section) {
-		sectionValveService.setOpen(section, true)
-
-		val irrigations = irrigationRepository.findAllUnfinishedBySection(section).toList().toMutableList()
-		if (irrigations.any()) {
-			irrigations.forEach { it.finished = true }
-		} else {
-			irrigations.add(Irrigation(section = section))
-		}
-
-		irrigations.first().apply {
-			finished = false
-			end = LocalDateTime.now()
-		}
-
-		irrigationRepository.saveAllAndFlush(irrigations)
-	}
-
-	fun stop(section: Section) {
-		sectionValveService.setOpen(section, false)
-		val irrigations = irrigationRepository.findAllUnfinishedBySection(section).toList()
-		irrigations.forEach { it.finished = true }
-
-		irrigationRepository.saveAllAndFlush(irrigations)
-	}
-
-	@Transactional
-	fun resetWithGpio() {
-		sectionRepository.findAll()
-			.forEach { section ->
-				sectionValveService.setOpen(section, false)
-				stop(section)
-			}
-	}
-
-	@Transactional
-	fun synchronizeWithGpio() {
-		sectionRepository.findAll()
-			.forEach { section ->
-				val shouldState = getCurrentIrrigations(section).any()
-
-				if (shouldState) {
-					start(section)
-				} else {
-					stop(section)
-				}
-			}
 	}
 }
 

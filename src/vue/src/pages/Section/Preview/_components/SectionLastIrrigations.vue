@@ -7,7 +7,7 @@
     </AppCardHeader>
     <q-markup-table v-if="lastIrrigations.length > 0">
       <tbody>
-        <tr v-for="(irrigation, index) in lastIrrigations" :key="index">
+        <tr v-for="irrigation in lastIrrigations" :key="irrigation.id">
           <td>
             {{ FormationUtilities.formatDateFromNow(irrigation.start) }}
             <span class="text-grey">
