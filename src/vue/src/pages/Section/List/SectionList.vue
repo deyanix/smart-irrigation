@@ -31,8 +31,17 @@
             flat
             round
             dense
-            :icon="props.row.active ? 'mdi-pause' : 'mdi-play'"
+            icon="mdi-pause"
             class="q-mr-sm"
+            @click="onStop(props.row)"
+          />
+          <q-btn
+            flat
+            round
+            dense
+            icon="mdi-play"
+            class="q-mr-sm"
+            @click="onStart(props.row)"
           />
           <q-btn
             flat
@@ -52,6 +61,9 @@ import StatusIndicator from 'components/Status/StatusIndicator.vue';
 import { SectionModel, SectionService } from 'src/api/Section';
 import { onBeforeMount, ref } from 'vue';
 import { useInstallationId } from 'src/composables/useInstallationId';
+import { Dialog } from 'quasar';
+import SectionPauseDialog from 'pages/Section/_dialogs/SectionPauseDialog.vue';
+import SectionStartDialog from 'pages/Section/_dialogs/SectionStartDialog.vue';
 
 const installationId = useInstallationId();
 
@@ -60,6 +72,24 @@ const rows = ref<SectionModel[]>([]);
 
 async function fetchTable() {
   rows.value = await SectionService.getSections(installationId.value);
+}
+
+function onStop(section: SectionModel) {
+  Dialog.create({
+    component: SectionPauseDialog,
+    componentProps: {
+      section,
+    },
+  }).onOk(() => fetchTable());
+}
+
+function onStart(section: SectionModel) {
+  Dialog.create({
+    component: SectionStartDialog,
+    componentProps: {
+      section,
+    },
+  }).onOk(() => fetchTable());
 }
 
 onBeforeMount(async () => {

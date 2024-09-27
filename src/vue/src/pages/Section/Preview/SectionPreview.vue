@@ -43,6 +43,7 @@ import SectionNearestIrrigations from 'pages/Section/Preview/_components/Section
 import { defineSectionPreviewStore } from 'pages/Section/Preview/_composables/useSectionPreviewStore';
 import SectionLastIrrigations from 'pages/Section/Preview/_components/SectionLastIrrigations.vue';
 import SectionSchedules from 'pages/Section/Preview/_components/SectionSchedules.vue';
+import SectionPauseDialog from 'pages/Section/_dialogs/SectionPauseDialog.vue';
 
 const $route = useRoute();
 
@@ -51,7 +52,10 @@ const { section, fetchStore } = defineSectionPreviewStore(sectionId);
 
 function onStop() {
   Dialog.create({
-    component: SectionStartDialog,
+    component: SectionPauseDialog,
+    componentProps: {
+      section: section.value,
+    },
   }).onOk(() => fetchStore());
 }
 
@@ -59,7 +63,7 @@ function onStart() {
   Dialog.create({
     component: SectionStartDialog,
     componentProps: {
-      sectionId: sectionId.value,
+      section: section.value,
     },
   }).onOk(() => fetchStore());
 }

@@ -2,15 +2,27 @@
   <q-dialog ref="dialogRef" persistent>
     <AppDialogWrapper width="560px">
       <q-form @submit="onSubmit">
-        <AppDialogHeader title="Uruchomienie sekcji" />
+        <AppDialogHeader title="Zatrzymanie sekcji" />
         <AppDialogSection>
-          <SectionScheduleEditor
-            v-model="model"
-            :from-options="startFromOptions"
-            :to-options="startToOptions"
-            default-from-option="now"
-            default-to-option="15min"
+          <q-checkbox
+            v-model="stopOnlyCurrent"
+            label="Zatrzymaj tylko obecne zraszczanie"
+            dense
+            class="q-mb-md"
           />
+          <q-slide-transition>
+            <div v-show="!stopOnlyCurrent">
+              <SectionScheduleEditor
+                v-model="model"
+                :from-options="pauseFromOptions"
+                :to-options="pauseToOptions"
+                default-from-option="now"
+                default-to-option="end-day"
+                multiday
+                :disable="stopOnlyCurrent"
+              />
+            </div>
+          </q-slide-transition>
         </AppDialogSection>
         <AppDialogActions>
           <q-btn label="Anuluj" flat rounded v-close-popup />
@@ -34,8 +46,8 @@ import { ref } from 'vue';
 import { SectionScheduleUpdate } from 'src/api/SectionSchedule/SectionScheduleTypes';
 import SectionScheduleEditor from 'pages/Section/_components/SectionScheduleEditor.vue';
 import {
-  startFromOptions,
-  startToOptions,
+  pauseFromOptions,
+  pauseToOptions,
 } from 'pages/Section/_types/DurationOptions';
 
 const { dialogRef, onDialogOK } = useDialogPluginComponent();
@@ -45,8 +57,9 @@ const props = defineProps<{
 }>();
 
 const model = ref<SectionScheduleUpdate>({
-  state: true,
+  state: false,
 });
+const stopOnlyCurrent = ref<boolean>(true);
 
 async function onSubmit() {
   Loading.show({

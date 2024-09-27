@@ -23,7 +23,7 @@ export const SectionScheduleDeclaration: SerializerDeclaration<SectionScheduleUp
   ];
 
 export interface SectionScheduleUpdate {
-  start: Date;
-  end: Date;
+  start?: Date;
+  end?: Date;
   state: boolean;
 }
