@@ -31,7 +31,7 @@ export function createSectionPreviewStore(sectionId: Ref<number>) {
         SectionService.getSection(sectionId.value),
         SectionSlotService.getSlots(sectionId.value),
         SectionIrrigationService.getUpcomingIrrigations(sectionId.value),
-        SectionIrrigationService.getIrrigations(sectionId.value, {
+        SectionIrrigationService.search(sectionId.value, {
           pageSize: 3,
         }).then((result) => result.rows),
       ]);

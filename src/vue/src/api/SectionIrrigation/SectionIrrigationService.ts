@@ -10,7 +10,7 @@ import { SerializerUtilities } from 'src/utilities/SerializerUtilities';
 import { AppSearchResponse } from 'src/utilities/ApiUtilities';
 
 export const SectionIrrigationService = {
-  async getIrrigations(
+  async search(
     sectionId: number,
     data: IrrigationSearchRequest
   ): Promise<AppSearchResponse<IrrigationModel>> {

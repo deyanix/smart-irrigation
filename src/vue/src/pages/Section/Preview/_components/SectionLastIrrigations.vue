@@ -2,7 +2,16 @@
   <AppCard>
     <AppCardHeader label="Ostatnie uruchomienia">
       <template #append>
-        <q-btn icon="chevron_right" flat round dense />
+        <q-btn
+          icon="chevron_right"
+          flat
+          round
+          dense
+          :to="{
+            name: 'SectionIrrigations',
+            params: { id: section?.id },
+          }"
+        />
       </template>
     </AppCardHeader>
     <q-markup-table v-if="lastIrrigations.length > 0">
@@ -41,7 +50,7 @@ import { computed } from 'vue';
 import { FormationUtilities } from 'src/utilities/FormationUtilities';
 import StatusIndicator from 'components/Status/StatusIndicator.vue';
 
-const { irrigations } = useSectionPreviewStore();
+const { irrigations, section } = useSectionPreviewStore();
 
 const lastIrrigations = computed(() => irrigations.value.slice(0, 3));
 </script>

@@ -30,6 +30,12 @@ const routes: RouteRecordRaw[] = [
         path: '/sections/:id/schedules',
         component: () => import('pages/Section/Schedules/SectionSchedules.vue'),
       },
+      {
+        name: 'SectionIrrigations',
+        path: '/sections/:id/irrigations',
+        component: () =>
+          import('pages/Section/Irrigations/SectionIrrigations.vue'),
+      },
     ],
   },
 
