@@ -82,13 +82,13 @@ export const pauseToOptions: DurationOption[] = [
     mutation: (date) => date.add(1, 'days').startOf('date').toDate(),
   },
   {
-    label: 'Do końca jutra',
+    label: 'Do końca kolejnego dnia',
     value: 'end-tomorrow',
     mutation: (date) => date.add(2, 'days').startOf('date').toDate(),
   },
   {
     label: 'Do końca tygodnia',
     value: 'end-week',
-    mutation: (date) => date.weekday(0).startOf('date').toDate(),
+    mutation: (date) => date.add(1, 'days').weekday(7).startOf('date').toDate(),
   },
 ];

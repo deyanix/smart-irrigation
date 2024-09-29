@@ -15,9 +15,13 @@ import org.springframework.web.bind.annotation.RestController
 class IrrigationController(
 	private val irrigationService: IrrigationService,
 ) {
+	@GetMapping("/installations/{installationId}/sections/any/irrigations")
+	fun getInstallationIrrigations(@PathVariable installationId: Int, @ParameterObject criteria: IrrigationCriteria): SearchResponse<IrrigationDTO> =
+		irrigationService.searchByInstallation(installationId, criteria)
+
 	@GetMapping("/installations/any/sections/{sectionId}/irrigations")
-	fun getIrrigations(@PathVariable sectionId: Int, @ParameterObject criteria: IrrigationCriteria): SearchResponse<IrrigationDTO> =
-		irrigationService.search(sectionId, criteria)
+	fun getSectionIrrigations(@PathVariable sectionId: Int, @ParameterObject criteria: IrrigationCriteria): SearchResponse<IrrigationDTO> =
+		irrigationService.searchBySection(sectionId, criteria)
 
 	@GetMapping("/installations/any/sections/{sectionId}/irrigations/upcoming")
 	fun getUpcomingIrrigations(@PathVariable sectionId: Int) =

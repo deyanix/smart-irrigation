@@ -2,10 +2,7 @@ package eu.deyanix.smartirrigation.service
 
 import eu.deyanix.smartirrigation.dao.Section
 import eu.deyanix.smartirrigation.dto.*
-import eu.deyanix.smartirrigation.repository.IrrigationRepository
-import eu.deyanix.smartirrigation.repository.SectionRepository
-import eu.deyanix.smartirrigation.repository.SectionScheduleRepository
-import eu.deyanix.smartirrigation.repository.SectionSlotRepository
+import eu.deyanix.smartirrigation.repository.*
 import eu.deyanix.smartirrigation.utils.LocalTimeSpan
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
@@ -20,9 +17,27 @@ class IrrigationService(
 	private val sectionSlotRepository: SectionSlotRepository,
 	private val sectionScheduleRepository: SectionScheduleRepository,
 	private val irrigationRepository: IrrigationRepository,
+	private val installationRepository: InstallationRepository,
 ) {
 	@Transactional(readOnly = true)
-	fun search(sectionId: Int, criteria: IrrigationCriteria): SearchResponse<IrrigationDTO> {
+	fun searchByInstallation(installationId: Int, criteria: IrrigationCriteria): SearchResponse<IrrigationDTO> {
+		val section = installationRepository.findById(installationId)
+			.orElseThrow()
+
+		val result = irrigationRepository
+			.findPageByInstallationBetween(
+				section,
+				criteria.from,
+				criteria.to,
+				PageRequest.of(criteria.page, criteria.pageSize)
+			)
+			.map(::IrrigationDTO)
+
+		return SearchResponse(result)
+	}
+
+	@Transactional(readOnly = true)
+	fun searchBySection(sectionId: Int, criteria: IrrigationCriteria): SearchResponse<IrrigationDTO> {
 		val section = sectionRepository.findById(sectionId)
 			.orElseThrow()
 
@@ -59,12 +74,12 @@ class IrrigationService(
 
 	@Transactional(readOnly = true)
 	fun getSlotSpansInTime(section: Section, dateFrom: LocalDateTime, dateTo: LocalDateTime): IrrigationSpans {
-		return this.getSlotSpans(section, dateFrom).onlyWhen(dateFrom, dateTo)
+		return getSlotSpans(section, dateFrom).onlyWhen(dateFrom, dateTo)
 	}
 
 	@Transactional(readOnly = true)
 	fun getScheduleSlots(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, state: Boolean?): IrrigationSpans {
-		val spans = sectionScheduleRepository.findAllBySectionBetween(section, dateFrom, dateTo, state)
+		val spans = sectionScheduleRepository.findAllBySectionInTime(section, dateFrom, dateTo, state)
 			.map {
 				IrrigationSpan(
 					span = LocalTimeSpan(start = it.start, end = it.end),
@@ -82,7 +97,7 @@ class IrrigationService(
 		val localMin = now.minusDays(1).with(LocalTime.MIN)
 		val localMax = now.plusDays(7).with(LocalTime.MAX)
 
-		val sectionSlotSpans = this.getSlotSpans(section, now)
+		val sectionSlotSpans = getSlotSpans(section, now)
 		val schedulePositiveSpans = getScheduleSlots(
 			section,
 			listOfNotNull(sectionSlotSpans.minTime(), localMin).min(),
