@@ -1,20 +1,18 @@
 package eu.deyanix.smartirrigation.service
 
 import eu.deyanix.smartirrigation.dao.Section
-import eu.deyanix.smartirrigation.dto.IrrigationDTO
-import eu.deyanix.smartirrigation.dto.IrrigationSpan
-import eu.deyanix.smartirrigation.dto.IrrigationSpans
+import eu.deyanix.smartirrigation.dto.*
 import eu.deyanix.smartirrigation.repository.IrrigationRepository
 import eu.deyanix.smartirrigation.repository.SectionRepository
 import eu.deyanix.smartirrigation.repository.SectionScheduleRepository
 import eu.deyanix.smartirrigation.repository.SectionSlotRepository
 import eu.deyanix.smartirrigation.utils.LocalTimeSpan
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.util.stream.Stream
 
 @Service
 class IrrigationService(
@@ -24,13 +22,20 @@ class IrrigationService(
 	private val irrigationRepository: IrrigationRepository,
 ) {
 	@Transactional(readOnly = true)
-	fun getIrrigations(sectionId: Int): Stream<IrrigationDTO> {
+	fun search(sectionId: Int, criteria: IrrigationCriteria): SearchResponse<IrrigationDTO> {
 		val section = sectionRepository.findById(sectionId)
 			.orElseThrow()
 
-		return irrigationRepository.findAllBetweenBySection(section, LocalDateTime.now().minusDays(1), LocalDateTime.now())
+		val result = irrigationRepository
+			.findPageBySectionBetween(
+				section,
+				criteria.from,
+				criteria.to,
+				PageRequest.of(criteria.page, criteria.pageSize)
+			)
 			.map(::IrrigationDTO)
-			.sorted(Comparator.comparing(IrrigationDTO::start).reversed())
+
+		return SearchResponse(result)
 	}
 
 	@Transactional(readOnly = true)

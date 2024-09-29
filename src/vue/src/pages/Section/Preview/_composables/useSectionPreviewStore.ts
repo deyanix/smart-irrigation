@@ -7,8 +7,6 @@ import {
 import { SectionIrrigationService } from 'src/api/SectionIrrigation/SectionIrrigationService';
 import { SectionSlotModel, SectionSlotService } from 'src/api/SectionSlot';
 import { Loading } from 'quasar';
-import { SectionScheduleService } from 'src/api/SectionSchedule';
-import { SectionScheduleModel } from 'src/api/SectionSchedule/SectionScheduleTypes';
 
 export type SectionPreviewStore = ReturnType<typeof createSectionPreviewStore>;
 
@@ -17,7 +15,6 @@ export function createSectionPreviewStore(sectionId: Ref<number>) {
   const slots = ref<SectionSlotModel[]>([]);
   const upcomingIrrigations = ref<SectionIrrigationModel[]>([]);
   const irrigations = ref<IrrigationModel[]>([]);
-  const schedules = ref<SectionScheduleModel[]>([]);
 
   async function fetchStore() {
     Loading.show({
@@ -30,16 +27,13 @@ export function createSectionPreviewStore(sectionId: Ref<number>) {
         slots.value,
         upcomingIrrigations.value,
         irrigations.value,
-        schedules.value,
       ] = await Promise.all([
         SectionService.getSection(sectionId.value),
         SectionSlotService.getSlots(sectionId.value),
         SectionIrrigationService.getUpcomingIrrigations(sectionId.value),
-        SectionIrrigationService.getIrrigations(sectionId.value),
-        SectionScheduleService.search(sectionId.value, {
-          from: new Date(),
+        SectionIrrigationService.getIrrigations(sectionId.value, {
           pageSize: 3,
-        }).then((data) => data.rows),
+        }).then((result) => result.rows),
       ]);
     } finally {
       Loading.hide('SectionPreviewStore-fetch');
@@ -53,7 +47,6 @@ export function createSectionPreviewStore(sectionId: Ref<number>) {
     slots,
     upcomingIrrigations,
     irrigations,
-    schedules,
     fetchStore,
   };
 }

@@ -47,7 +47,7 @@ export const FormationUtilities = {
       } else if (diffDays > 2) {
         return `za ${diffDays} dni`;
       } else if (diffDays < 2) {
-        return `${diffDays} dni temu`;
+        return `${-diffDays} dni temu`;
       } else {
         return undefined;
       }

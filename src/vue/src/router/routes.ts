@@ -25,6 +25,11 @@ const routes: RouteRecordRaw[] = [
         path: '/sections/:id',
         component: () => import('pages/Section/Preview/SectionPreview.vue'),
       },
+      {
+        name: 'SectionSchedules',
+        path: '/sections/:id/schedules',
+        component: () => import('pages/Section/Schedules/SectionSchedules.vue'),
+      },
     ],
   },
 

@@ -28,10 +28,13 @@ export const SectionScheduleService = {
       SectionScheduleDeclaration
     );
   },
-  async create(sectionId: number, data: SectionScheduleUpdate) {
+  async create(sectionId: number, data: SectionScheduleUpdate): Promise<void> {
     await api.post(
       `/installations/any/sections/${sectionId}/schedules`,
       SerializerUtilities.serialize(data, SectionScheduleDeclaration)
     );
+  },
+  async delete(scheduleId: number): Promise<void> {
+    await api.delete(`/installations/any/sections/any/schedules/${scheduleId}`);
   },
 };

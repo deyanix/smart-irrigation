@@ -12,9 +12,8 @@
         </AppBreadcrumbs>
       </template>
       <template #actions>
-        <q-btn flat round icon="mdi-pause" @click="onStop" />
-        <q-btn flat round icon="mdi-play" @click="onStart" />
-        <q-btn flat round icon="more_vert" />
+        <SectionController :section="section" @change="fetchStore" />
+        <SectionActions />
       </template>
     </AppPageHeader>
     <div class="row q-col-gutter-md">
@@ -24,47 +23,24 @@
       <div class="col-12 col-md-6">
         <SectionLastIrrigations />
       </div>
-      <div class="col-12 col-md-6">
+      <div class="col-12">
         <SectionSlots />
-      </div>
-      <div class="col-12 col-md-6">
-        <SectionSchedules />
       </div>
     </div>
   </q-page>
 </template>
 <script setup lang="ts">
-import { Dialog } from 'quasar';
-import SectionStartDialog from '../_dialogs/SectionStartDialog.vue';
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
 import SectionSlots from './_components/SectionSlots.vue';
 import SectionNearestIrrigations from 'pages/Section/Preview/_components/SectionNearestIrrigations.vue';
 import { defineSectionPreviewStore } from 'pages/Section/Preview/_composables/useSectionPreviewStore';
 import SectionLastIrrigations from 'pages/Section/Preview/_components/SectionLastIrrigations.vue';
-import SectionSchedules from 'pages/Section/Preview/_components/SectionSchedules.vue';
-import SectionPauseDialog from 'pages/Section/_dialogs/SectionPauseDialog.vue';
+import SectionController from 'pages/Section/_components/SectionController.vue';
+import SectionActions from 'pages/Section/Preview/_components/SectionActions.vue';
 
 const $route = useRoute();
 
 const sectionId = computed(() => parseInt($route.params.id as string));
 const { section, fetchStore } = defineSectionPreviewStore(sectionId);
-
-function onStop() {
-  Dialog.create({
-    component: SectionPauseDialog,
-    componentProps: {
-      section: section.value,
-    },
-  }).onOk(() => fetchStore());
-}
-
-function onStart() {
-  Dialog.create({
-    component: SectionStartDialog,
-    componentProps: {
-      section: section.value,
-    },
-  }).onOk(() => fetchStore());
-}
 </script>
