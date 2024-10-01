@@ -25,5 +25,5 @@ class IrrigationController(
 
 	@GetMapping("/installations/any/sections/{sectionId}/irrigations/upcoming")
 	fun getUpcomingIrrigations(@PathVariable sectionId: Int) =
-		irrigationService.getUpcomingIrrigations(sectionId)
+		irrigationService.getUpcomingIrrigations(sectionId).spans.map { it.toResponse() }
 }

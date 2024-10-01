@@ -2,9 +2,7 @@ package eu.deyanix.smartirrigation.service
 
 import eu.deyanix.smartirrigation.dao.Section
 import eu.deyanix.smartirrigation.dao.SectionSchedule
-import eu.deyanix.smartirrigation.dto.IrrigationDTO
 import eu.deyanix.smartirrigation.dto.SectionDTO
-import eu.deyanix.smartirrigation.repository.IrrigationRepository
 import eu.deyanix.smartirrigation.repository.SectionRepository
 import eu.deyanix.smartirrigation.repository.SectionScheduleRepository
 import org.springframework.stereotype.Service
@@ -45,8 +43,8 @@ class SectionService(
 			.map {
 				SectionSchedule(
 					section = section,
-					start = it.start,
-					end = it.end,
+					start = it.timeSpan.start,
+					end = it.timeSpan.end,
 					state = false,
 				)
 			}

@@ -1,53 +1,106 @@
 package eu.deyanix.smartirrigation.dto
 
 import eu.deyanix.smartirrigation.utils.LocalTimeSpan
-import java.time.DayOfWeek
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.temporal.TemporalAdjusters
 
 
 data class IrrigationSpan(
-	val span: LocalTimeSpan,
+	val timeSpan: LocalTimeSpan,
 	val state: Boolean,
+	val sources: Array<IrrigationSource>,
 ) {
-	class Builder(
-		private val start: LocalTime,
-		private val end: LocalTime,
-		private val state: Boolean,
-	) {
-		fun next(ref: LocalDateTime, startWeekday: DayOfWeek): IrrigationSpan {
-			val endWeekday = startWeekday.plus(if (start < end) 0 else 1)
+	fun merge(other: IrrigationSpan, timeSpan: LocalTimeSpan): IrrigationSpan =
+		IrrigationSpan(
+			timeSpan = timeSpan,
+			state = state || other.state,
+			sources = listOf(*sources, *other.sources)
+				.filter { timeSpan.isOverlap(LocalTimeSpan(it.start, it.end)) }
+				.distinct()
+				.toTypedArray()
+		)
 
-			val previousStart = ref.with(TemporalAdjusters.previousOrSame(startWeekday)).with(start)
-			val previousEnd = previousStart.with(TemporalAdjusters.nextOrSame(endWeekday)).with(end)
-			if (ref in previousStart..previousEnd) {
-				return IrrigationSpan(
-					span = LocalTimeSpan(
-						start = previousStart,
-						end = previousEnd
-					),
-					state = state,
-				)
-			}
-
-			if (endWeekday == ref.dayOfWeek && ref.toLocalTime() > end) {
-				return IrrigationSpan(
-					span = LocalTimeSpan(
-						start = ref.with(TemporalAdjusters.next(startWeekday)).with(start),
-						end = ref.with(TemporalAdjusters.next(endWeekday)).with(end),
-					),
-					state = state,
-				)
-			}
-
-			return IrrigationSpan(
-				span = LocalTimeSpan(
-					start = ref.with(TemporalAdjusters.nextOrSame(startWeekday)).with(start),
-					end = ref.with(TemporalAdjusters.nextOrSame(endWeekday)).with(end),
-				),
-				state = state,
-			)
+	fun union(other: IrrigationSpan): List<IrrigationSpan> {
+		if (state != other.state || !timeSpan.isOverlap(other.timeSpan)) {
+			return listOf(this, other)
 		}
+
+		val resultTimeSpans = timeSpan.union(other.timeSpan)
+		return resultTimeSpans
+			.map { merge(other, it) }
+			.toList()
+	}
+
+	fun exclude(other: IrrigationSpan): List<IrrigationSpan> {
+		if (state == other.state) {
+			return listOf(this, other)
+		}
+
+		if (!timeSpan.isOverlap(other.timeSpan)) {
+			return if (state) listOf(this) else listOf(other)
+		}
+
+		val resultTimeSpans = if (state) timeSpan.exclude(other.timeSpan) else other.timeSpan.exclude(timeSpan)
+		return resultTimeSpans
+			.map { merge(other, it) }
+			.toList()
+	}
+
+	fun join(other: IrrigationSpan): List<IrrigationSpan> {
+		return if (state == other.state)
+			union(other)
+		else
+			exclude(other)
+	}
+
+	fun toResponse(): UpcomingIrrigationItem {
+		val sources = sources
+			.mapNotNull {
+				return@mapNotNull if (it is IrrigationSource.SectionScheduleSource) {
+					UpcomingIrrigationItem.Source(
+						start = it.start,
+						end = it.end,
+						state = it.schedule.state,
+						scheduleId = it.schedule.id,
+					)
+				} else if (it is IrrigationSource.SectionSlotSource) {
+					UpcomingIrrigationItem.Source(
+						start = it.start,
+						end = it.end,
+						state = true,
+						slotId = it.slot.id,
+					)
+				} else {
+					null
+				}
+			}
+
+		return UpcomingIrrigationItem(
+			start = timeSpan.start,
+			end = timeSpan.end,
+			sources = sources,
+		)
+	}
+
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+
+		other as IrrigationSpan
+
+		if (timeSpan != other.timeSpan) return false
+		if (state != other.state) return false
+		if (!sources.contentEquals(other.sources)) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = timeSpan.hashCode()
+		result = 31 * result + state.hashCode()
+		result = 31 * result + sources.contentHashCode()
+		return result
+	}
+
+	override fun toString(): String {
+		return "IrrigationSpan(state=$state, timeSpan=$timeSpan)"
 	}
 }

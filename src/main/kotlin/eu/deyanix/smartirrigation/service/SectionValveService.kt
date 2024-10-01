@@ -60,7 +60,9 @@ class SectionValveService(
 
 	@Transactional
 	fun synchronizeGpio(section: Section) {
-		val shouldState = irrigationService.getCurrentIrrigations(section).isNotEmpty()
+		val shouldState = irrigationService.getUpcomingIrrigations(section)
+			.onlyNow()
+			.isNonEmpty()
 
 		if (shouldState) {
 			start(section)

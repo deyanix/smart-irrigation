@@ -1,6 +1,5 @@
 package eu.deyanix.smartirrigation.controller
 
-import eu.deyanix.smartirrigation.dto.IrrigationDTO
 import eu.deyanix.smartirrigation.dto.SectionDTO
 import eu.deyanix.smartirrigation.service.SectionService
 import io.swagger.v3.oas.annotations.tags.Tag

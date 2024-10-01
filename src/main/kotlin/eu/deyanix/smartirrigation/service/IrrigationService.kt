@@ -4,6 +4,7 @@ import eu.deyanix.smartirrigation.dao.Section
 import eu.deyanix.smartirrigation.dto.*
 import eu.deyanix.smartirrigation.repository.*
 import eu.deyanix.smartirrigation.utils.LocalTimeSpan
+import eu.deyanix.smartirrigation.utils.LocalTimeSpanBuilder
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -54,82 +55,70 @@ class IrrigationService(
 	}
 
 	@Transactional(readOnly = true)
-	fun getSlotSpans(section: Section, dateFrom: LocalDateTime): IrrigationSpans {
+	fun getSlotSpans(section: Section, dateFrom: LocalDateTime): IrrigationSpanCollection {
 		val spans = sectionSlotRepository.findAllBySection(section)
 			.flatMap { slot ->
-				val builder = IrrigationSpan.Builder(
+				val builder = LocalTimeSpanBuilder(
+					ref = dateFrom,
 					start = slot.start,
 					end = slot.end,
-					state = true,
 				)
 
 				return@flatMap slot.weekdays
 					.stream()
-					.map { builder.next(dateFrom, DayOfWeek.of(it.weekday)) }
+					.map {
+						val timeSpan = builder.next(DayOfWeek.of(it.weekday))
+						return@map IrrigationSpan(
+							timeSpan = timeSpan,
+							state = true,
+							sources = arrayOf(
+								IrrigationSource.SectionSlotSource(slot, timeSpan.start, timeSpan.end)
+							)
+						)
+					}
 			}
 			.toList()
 
-		return IrrigationSpans.of(spans)
+		return IrrigationSpanCollection.ofSpans(spans)
 	}
 
 	@Transactional(readOnly = true)
-	fun getSlotSpansInTime(section: Section, dateFrom: LocalDateTime, dateTo: LocalDateTime): IrrigationSpans {
+	fun getSlotSpansInTime(section: Section, dateFrom: LocalDateTime, dateTo: LocalDateTime): IrrigationSpanCollection {
 		return getSlotSpans(section, dateFrom).onlyWhen(dateFrom, dateTo)
 	}
 
 	@Transactional(readOnly = true)
-	fun getScheduleSlots(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, state: Boolean?): IrrigationSpans {
+	fun getScheduleSlots(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, state: Boolean?): IrrigationSpanCollection {
 		val spans = sectionScheduleRepository.findAllBySectionInTime(section, dateFrom, dateTo, state)
 			.map {
 				IrrigationSpan(
-					span = LocalTimeSpan(start = it.start, end = it.end),
+					timeSpan = LocalTimeSpan(start = it.start, end = it.end),
 					state = it.state,
+					sources = arrayOf(IrrigationSource.SectionScheduleSource(it))
 				)
 			}
 			.toList()
 
-		return IrrigationSpans.of(spans)
+		return IrrigationSpanCollection.ofSpans(spans)
 	}
 
 	@Transactional(readOnly = true)
-	fun getUpcomingIrrigations(section: Section): List<LocalTimeSpan> {
+	fun getUpcomingIrrigations(section: Section): IrrigationSpanCollection {
 		val now = LocalDateTime.now()
 		val localMin = now.minusDays(1).with(LocalTime.MIN)
 		val localMax = now.plusDays(7).with(LocalTime.MAX)
 
 		val sectionSlotSpans = getSlotSpans(section, now)
-		val schedulePositiveSpans = getScheduleSlots(
-			section,
-			listOfNotNull(sectionSlotSpans.minTime(), localMin).min(),
-			listOfNotNull(sectionSlotSpans.maxTime(), localMax).max(),
-			true)
-		val allPositiveSpans = IrrigationSpans.flatten(listOf(sectionSlotSpans, schedulePositiveSpans))
-		val scheduleNegativeSpans = getScheduleSlots(
-			section,
-			listOfNotNull(allPositiveSpans.minTime(), localMin).min(),
-			listOfNotNull(allPositiveSpans.maxTime(), localMax).max(),
-			false)
+		val schedulePositiveSpans = getScheduleSlots(section, localMin, localMax, true)
+		val scheduleNegativeSpans = getScheduleSlots(section, localMin, localMax, false)
 
-		val mergedSpans = IrrigationSpans.flatten(listOf(allPositiveSpans, scheduleNegativeSpans))
-		if (mergedSpans.state) {
-			return mergedSpans.spans
-				.filter { it.end > now }
-				.sortedBy { it.start }
-		}
-		return emptyList()
+		return IrrigationSpanCollection.ofCollections(sectionSlotSpans, schedulePositiveSpans, scheduleNegativeSpans)
+			.onlyState(true)
+			.onlyAfter(now)
 	}
 
 	@Transactional(readOnly = true)
-	fun getUpcomingIrrigations(sectionId: Int): List<LocalTimeSpan> {
+	fun getUpcomingIrrigations(sectionId: Int): IrrigationSpanCollection {
 		return getUpcomingIrrigations(sectionRepository.findById(sectionId).orElseThrow())
 	}
-
-	@Transactional(readOnly = true)
-	fun getCurrentIrrigations(section: Section): List<LocalTimeSpan> {
-		val now = LocalDateTime.now()
-		return getUpcomingIrrigations(section)
-			.filter { span -> span.isBetween(now) }
-	}
 }
-
-
