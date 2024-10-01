@@ -1,13 +1,20 @@
 import dayjs from 'dayjs';
-import { get, isEmpty, isString, set } from 'radashi';
+import { clone, get, isArray, isEmpty, isString, set } from 'radashi';
 import { mapToDayOfWeeks, mapToNativeDayOfWeeks } from './_types/DayOfWeeks';
 import { AppSearchResponse } from 'src/utilities/ApiUtilities';
 
-export type SerializerFieldType = 'date' | 'datetime' | 'time' | 'weekdays';
+export type SerializerFieldType =
+  | 'date'
+  | 'datetime'
+  | 'time'
+  | 'weekdays'
+  | 'object'
+  | 'array';
 
-export type SerializerField<Data> = {
+export type SerializerField<Data, NestedData = any> = {
   path: keyof Data | string;
   type: SerializerFieldType;
+  declaration?: SerializerDeclaration<NestedData>;
 };
 
 export type SerializerDeclaration<Data> = SerializerField<Data>[];
@@ -17,7 +24,7 @@ export const SerializerUtilities = {
     data: Data,
     declaration: SerializerDeclaration<Data>
   ): Data {
-    let result = { ...data };
+    let result = clone(data);
     declaration.forEach((field) => {
       const path = field.path.toString();
       const value = get(result, path);
@@ -39,6 +46,24 @@ export const SerializerUtilities = {
           break;
         case 'weekdays':
           result = set(result, path, mapToNativeDayOfWeeks(value));
+          break;
+        case 'object':
+          if (field.declaration) {
+            result = set(
+              result,
+              path,
+              this.deserialize(result, field.declaration)
+            );
+          }
+          break;
+        case 'array':
+          if (field.declaration && isArray(value)) {
+            result = set(
+              result,
+              path,
+              this.deserializeArray(value, field.declaration)
+            );
+          }
           break;
       }
     });
@@ -64,7 +89,7 @@ export const SerializerUtilities = {
     data: Data,
     declaration: SerializerDeclaration<Data>
   ): Data {
-    let result = { ...data };
+    let result = clone(data);
     declaration.forEach((field) => {
       const path = field.path.toString();
       const value = get(result, path);
@@ -99,9 +124,33 @@ export const SerializerUtilities = {
         case 'weekdays':
           result = set(result, path, mapToDayOfWeeks(value));
           break;
+        case 'object':
+          if (field.declaration) {
+            result = set(
+              result,
+              path,
+              this.serialize(result, field.declaration)
+            );
+          }
+          break;
+        case 'array':
+          if (field.declaration && isArray(value)) {
+            result = set(
+              result,
+              path,
+              this.serializeArray(value, field.declaration)
+            );
+          }
+          break;
       }
     });
 
     return result;
+  },
+  serializeArray<Data extends object>(
+    data: Data[],
+    declaration: SerializerDeclaration<Data>
+  ): Data[] {
+    return data.map((el) => this.serialize(el, declaration));
   },
 };

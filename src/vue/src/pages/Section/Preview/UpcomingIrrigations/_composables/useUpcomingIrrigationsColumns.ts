@@ -1,7 +1,7 @@
 import { QTableColumn } from 'quasar';
 import { FormationUtilities } from 'src/utilities/FormationUtilities';
 
-export function useSectionIrrigationsColumns(): QTableColumn[] {
+export function useUpcomingIrrigationsColumns(): QTableColumn[] {
   return [
     {
       name: 'startDate',
@@ -23,6 +23,12 @@ export function useSectionIrrigationsColumns(): QTableColumn[] {
       label: 'Do',
       format: (val) => FormationUtilities.formatTime(val) ?? '',
       align: 'left',
+    },
+    {
+      name: 'actions',
+      field: 'actions',
+      label: '',
+      align: 'right',
     },
   ];
 }

@@ -22,7 +22,7 @@
   </AppCard>
 </template>
 <script setup lang="ts">
-import { IrrigationSearchRequest } from 'src/api/SectionIrrigation/SectionIrrigationTypes';
+import { IrrigationSearchRequest } from 'src/api/Irrigation/IrrigationTypes';
 
 const model = defineModel<IrrigationSearchRequest>({ required: true });
 

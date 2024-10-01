@@ -1,15 +1,16 @@
 import {
   IrrigationModel,
   IrrigationSearchRequest,
-  SectionIrrigationModel,
-  SerializerIrrigationDeclaration,
+  UpcomingIrrigationModel,
+  UpcomingIrrigationDeclaration,
   SerializerIrrigationSearchRequestDeclaration,
-} from 'src/api/SectionIrrigation/SectionIrrigationTypes';
+  SerializerIrrigationDeclaration,
+} from 'src/api/Irrigation/IrrigationTypes';
 import { api } from 'boot/axios';
 import { SerializerUtilities } from 'src/utilities/SerializerUtilities';
 import { AppSearchResponse } from 'src/utilities/ApiUtilities';
 
-export const SectionIrrigationService = {
+export const IrrigationService = {
   async search(
     sectionId: number,
     data: IrrigationSearchRequest
@@ -31,14 +32,14 @@ export const SectionIrrigationService = {
   },
   async getUpcomingIrrigations(
     sectionId: number
-  ): Promise<SectionIrrigationModel[]> {
+  ): Promise<UpcomingIrrigationModel[]> {
     const response = await api.get(
       `/installations/any/sections/${sectionId}/irrigations/upcoming`
     );
 
     return SerializerUtilities.deserializeArray(
       response.data,
-      SerializerIrrigationDeclaration
+      UpcomingIrrigationDeclaration
     );
   },
 };

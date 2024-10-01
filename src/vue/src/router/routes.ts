@@ -28,13 +28,22 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'SectionSchedules',
         path: '/sections/:id/schedules',
-        component: () => import('pages/Section/Schedules/SectionSchedules.vue'),
+        component: () =>
+          import('pages/Section/Preview/Schedules/SectionSchedules.vue'),
       },
       {
         name: 'SectionIrrigations',
         path: '/sections/:id/irrigations',
         component: () =>
-          import('pages/Section/Irrigations/SectionIrrigations.vue'),
+          import('pages/Section/Preview/Irrigations/SectionIrrigations.vue'),
+      },
+      {
+        name: 'SectionUpcomingIrrigations',
+        path: '/sections/:id/upcoming-irrigations',
+        component: () =>
+          import(
+            'pages/Section/Preview/UpcomingIrrigations/SectionUpcomingIrrigations.vue'
+          ),
       },
     ],
   },

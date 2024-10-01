@@ -2,7 +2,16 @@
   <AppCard>
     <AppCardHeader label="Nadchodzące uruchomienia">
       <template #append>
-        <q-btn icon="chevron_right" flat round dense />
+        <q-btn
+          icon="chevron_right"
+          flat
+          round
+          dense
+          :to="{
+            name: 'SectionUpcomingIrrigations',
+            params: { id: section?.id },
+          }"
+        />
       </template>
     </AppCardHeader>
     <q-markup-table v-if="nearestIrrigations.length > 0">
@@ -34,7 +43,7 @@ import { FormationUtilities } from 'src/utilities/FormationUtilities';
 import { useSectionPreviewStore } from 'pages/Section/Preview/_composables/useSectionPreviewStore';
 import { computed } from 'vue';
 
-const { upcomingIrrigations } = useSectionPreviewStore();
+const { section, upcomingIrrigations } = useSectionPreviewStore();
 
 const nearestIrrigations = computed(() =>
   upcomingIrrigations.value.slice(0, 3)

@@ -2,9 +2,9 @@ import { SectionModel, SectionService } from 'src/api/Section';
 import { inject, InjectionKey, onBeforeMount, provide, Ref, ref } from 'vue';
 import {
   IrrigationModel,
-  SectionIrrigationModel,
-} from 'src/api/SectionIrrigation/SectionIrrigationTypes';
-import { SectionIrrigationService } from 'src/api/SectionIrrigation/SectionIrrigationService';
+  UpcomingIrrigationModel,
+} from 'src/api/Irrigation/IrrigationTypes';
+import { IrrigationService } from 'src/api/Irrigation/IrrigationService';
 import { SectionSlotModel, SectionSlotService } from 'src/api/SectionSlot';
 import { Loading } from 'quasar';
 
@@ -13,7 +13,7 @@ export type SectionPreviewStore = ReturnType<typeof createSectionPreviewStore>;
 export function createSectionPreviewStore(sectionId: Ref<number>) {
   const section = ref<SectionModel>();
   const slots = ref<SectionSlotModel[]>([]);
-  const upcomingIrrigations = ref<SectionIrrigationModel[]>([]);
+  const upcomingIrrigations = ref<UpcomingIrrigationModel[]>([]);
   const irrigations = ref<IrrigationModel[]>([]);
 
   async function fetchStore() {
@@ -30,8 +30,8 @@ export function createSectionPreviewStore(sectionId: Ref<number>) {
       ] = await Promise.all([
         SectionService.getSection(sectionId.value),
         SectionSlotService.getSlots(sectionId.value),
-        SectionIrrigationService.getUpcomingIrrigations(sectionId.value),
-        SectionIrrigationService.search(sectionId.value, {
+        IrrigationService.getUpcomingIrrigations(sectionId.value),
+        IrrigationService.search(sectionId.value, {
           pageSize: 3,
         }).then((result) => result.rows),
       ]);

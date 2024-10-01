@@ -6,7 +6,7 @@
 </template>
 <script setup lang="ts">
 defineProps<{
-  active: boolean;
+  active?: boolean;
 }>();
 </script>
 <style lang="scss">
@@ -19,12 +19,12 @@ defineProps<{
 
   &--active {
     background: $positive;
-    animation: blinker 1s linear infinite;
+    animation: blinker 1s ease-in-out infinite;
   }
 }
 
 @keyframes blinker {
-  20% {
+  30% {
     opacity: 0;
   }
   50% {
