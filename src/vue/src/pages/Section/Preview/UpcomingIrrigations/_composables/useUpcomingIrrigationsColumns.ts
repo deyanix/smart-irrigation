@@ -7,7 +7,6 @@ export function useUpcomingIrrigationsColumns(): QTableColumn[] {
       name: 'startDate',
       field: 'start',
       label: 'Data',
-      format: (val) => FormationUtilities.formatDate(val) ?? '',
       align: 'left',
     },
     {

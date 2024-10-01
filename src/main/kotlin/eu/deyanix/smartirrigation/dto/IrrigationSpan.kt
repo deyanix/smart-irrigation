@@ -52,6 +52,10 @@ data class IrrigationSpan(
 	}
 
 	fun toResponse(): UpcomingIrrigationItem {
+		val section = sources
+			.map { it.section }
+			.first()
+
 		val sources = sources
 			.mapNotNull {
 				return@mapNotNull if (it is IrrigationSource.SectionScheduleSource) {
@@ -76,6 +80,8 @@ data class IrrigationSpan(
 		return UpcomingIrrigationItem(
 			start = timeSpan.start,
 			end = timeSpan.end,
+			sectionId = section.id,
+			sectionName = section.name,
 			sources = sources,
 		)
 	}

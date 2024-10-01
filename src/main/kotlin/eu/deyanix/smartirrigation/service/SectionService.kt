@@ -1,8 +1,10 @@
 package eu.deyanix.smartirrigation.service
 
+import eu.deyanix.smartirrigation.dao.Installation
 import eu.deyanix.smartirrigation.dao.Section
 import eu.deyanix.smartirrigation.dao.SectionSchedule
 import eu.deyanix.smartirrigation.dto.SectionDTO
+import eu.deyanix.smartirrigation.repository.InstallationRepository
 import eu.deyanix.smartirrigation.repository.SectionRepository
 import eu.deyanix.smartirrigation.repository.SectionScheduleRepository
 import org.springframework.stereotype.Service
@@ -12,6 +14,7 @@ import java.util.stream.Stream
 
 @Service
 class SectionService(
+	private val installationRepository: InstallationRepository,
 	private val sectionRepository: SectionRepository,
 	private val sectionScheduleRepository: SectionScheduleRepository,
 	private val irrigationService: IrrigationService,
@@ -25,9 +28,13 @@ class SectionService(
 			.orElseThrow()
 
 	@Transactional(readOnly = true)
-	fun getSections(installationId: Int): Stream<SectionDTO> =
-		sectionRepository.findAllByInstallation(installationId)
+	fun getSections(installation: Installation): Stream<SectionDTO> =
+		sectionRepository.findAllByInstallation(installation)
 			.map(this::convertSectionToDTO)
+
+	@Transactional(readOnly = true)
+	fun getSections(installationId: Int): Stream<SectionDTO> =
+		getSections(installationRepository.findById(installationId).orElseThrow())
 
 	@Transactional
 	fun stop(section: Section, dateFrom: LocalDateTime, dateTo: LocalDateTime) {

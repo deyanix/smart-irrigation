@@ -30,8 +30,8 @@ export function createSectionPreviewStore(sectionId: Ref<number>) {
       ] = await Promise.all([
         SectionService.getSection(sectionId.value),
         SectionSlotService.getSlots(sectionId.value),
-        IrrigationService.getUpcomingIrrigations(sectionId.value),
-        IrrigationService.search(sectionId.value, {
+        IrrigationService.getUpcomingIrrigationsBySection(sectionId.value),
+        IrrigationService.searchBySection(sectionId.value, {
           pageSize: 3,
         }).then((result) => result.rows),
       ]);

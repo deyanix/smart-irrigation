@@ -42,6 +42,8 @@ export const UpcomingIrrigationSourceDeclaration: SerializerDeclaration<Upcoming
 export interface UpcomingIrrigationModel {
   start: Date;
   end: Date;
+  sectionId: number;
+  sectionName: string;
   sources: UpcomingIrrigationSource[];
 }
 

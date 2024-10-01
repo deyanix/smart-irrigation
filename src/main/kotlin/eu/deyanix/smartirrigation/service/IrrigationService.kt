@@ -1,5 +1,6 @@
 package eu.deyanix.smartirrigation.service
 
+import eu.deyanix.smartirrigation.dao.Installation
 import eu.deyanix.smartirrigation.dao.Section
 import eu.deyanix.smartirrigation.dto.*
 import eu.deyanix.smartirrigation.repository.*
@@ -103,7 +104,7 @@ class IrrigationService(
 	}
 
 	@Transactional(readOnly = true)
-	fun getUpcomingIrrigations(section: Section): IrrigationSpanCollection {
+	fun getUpcomingIrrigationsBySection(section: Section): IrrigationSpanCollection {
 		val now = LocalDateTime.now()
 		val localMin = now.minusDays(1).with(LocalTime.MIN)
 		val localMax = now.plusDays(7).with(LocalTime.MAX)
@@ -118,7 +119,23 @@ class IrrigationService(
 	}
 
 	@Transactional(readOnly = true)
-	fun getUpcomingIrrigations(sectionId: Int): IrrigationSpanCollection {
-		return getUpcomingIrrigations(sectionRepository.findById(sectionId).orElseThrow())
+	fun getUpcomingIrrigationsBySection(sectionId: Int): List<UpcomingIrrigationItem> =
+		getUpcomingIrrigationsBySection(sectionRepository.findById(sectionId).orElseThrow())
+			.spans
+			.map { it.toResponse() }
+
+	@Transactional(readOnly = true)
+	fun getUpcomingIrrigationsByInstallation(installation: Installation): IrrigationSpanCollection {
+		val spanCollections = sectionRepository.findAllByInstallation(installation)
+			.map {getUpcomingIrrigationsBySection(it)}
+			.toList()
+
+		return IrrigationSpanCollection.ofCollections(spanCollections)
 	}
+
+	@Transactional(readOnly = true)
+	fun getUpcomingIrrigationsByInstallation(installationId: Int): List<UpcomingIrrigationItem> =
+		getUpcomingIrrigationsByInstallation(installationRepository.findById(installationId).orElseThrow())
+			.spans
+			.map { it.toResponse() }
 }

@@ -56,7 +56,10 @@ const columns = useSectionIrrigationsColumns();
 const { loading, rows, request, fetchTable, pagination } = useSearchTable<
   IrrigationSearchRequest,
   IrrigationModel
->((request) => IrrigationService.search(section.value!.id, request), {});
+>(
+  (request) => IrrigationService.searchBySection(section.value!.id, request),
+  {}
+);
 
 const $route = useRoute();
 const sectionId = computed(() => parseInt($route.params.id as string));

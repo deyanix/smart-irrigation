@@ -5,6 +5,8 @@ import java.time.LocalDateTime
 data class UpcomingIrrigationItem(
 	val start: LocalDateTime,
 	val end: LocalDateTime,
+	val sectionId: Int,
+	val sectionName: String,
 	val sources: List<Source>
 ) {
 	data class Source(
