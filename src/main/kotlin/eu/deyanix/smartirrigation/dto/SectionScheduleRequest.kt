@@ -1,9 +1,9 @@
 package eu.deyanix.smartirrigation.dto
 
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 data class SectionScheduleRequest(
-	val start: LocalDateTime,
-	val end: LocalDateTime,
+	val start: ZonedDateTime,
+	val end: ZonedDateTime,
 	val state: Boolean,
 )

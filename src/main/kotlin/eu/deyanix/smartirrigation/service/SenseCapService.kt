@@ -8,7 +8,6 @@ import eu.deyanix.smartirrigation.repository.SensorItemRepository
 import eu.deyanix.smartirrigation.repository.SensorRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import kotlin.jvm.optionals.getOrNull
 
@@ -31,12 +30,12 @@ class SenseCapService(
 
 		context.read<List<Any>>("$.uplink_message.decoded_payload.messages")
 			.forEach {
-				handleMeasurement(sensor, receivedAt.toLocalDateTime(), it)
+				handleMeasurement(sensor, receivedAt, it)
 			}
 	}
 
 	@Transactional
-	fun handleMeasurement(sensor: Sensor, date: LocalDateTime, message: Any) {
+	fun handleMeasurement(sensor: Sensor, date: ZonedDateTime, message: Any) {
 		val context = JsonPath.parse(message)
 
 		val key = when (context.read<String?>("$.type")) {

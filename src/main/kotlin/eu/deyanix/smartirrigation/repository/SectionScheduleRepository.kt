@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.stream.Stream
 
 interface SectionScheduleRepository : JpaRepository<SectionSchedule, Int> {
@@ -15,12 +15,12 @@ interface SectionScheduleRepository : JpaRepository<SectionSchedule, Int> {
 			"AND (CAST(:dateTo AS TIMESTAMP) IS NULL OR SS.start <= :dateTo) " +
 			"AND SS.section = :section " +
 			"ORDER BY SS.start")
-	fun findPageBySectionBetween(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, pageable: Pageable): Page<SectionSchedule>
+	fun findPageBySectionBetween(section: Section, dateFrom: ZonedDateTime?, dateTo: ZonedDateTime?, pageable: Pageable): Page<SectionSchedule>
 
 	@Query("SELECT SS FROM SectionSchedule SS " +
 			"WHERE (CAST(:dateFrom AS TIMESTAMP) IS NULL OR SS.end >= :dateFrom) " +
 			"AND (CAST(:dateTo AS TIMESTAMP) IS NULL OR SS.start <= :dateTo) " +
 			"AND (:state IS NULL OR SS.state = :state) " +
 			"AND SS.section = :section")
-	fun findAllBySectionInTime(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, state: Boolean?): Stream<SectionSchedule>
+	fun findAllBySectionInTime(section: Section, dateFrom: ZonedDateTime?, dateTo: ZonedDateTime?, state: Boolean?): Stream<SectionSchedule>
 }

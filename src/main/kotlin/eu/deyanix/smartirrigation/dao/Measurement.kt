@@ -1,7 +1,7 @@
 package eu.deyanix.smartirrigation.dao
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @Entity
 @Table(schema = "sensor")
@@ -12,6 +12,6 @@ data class Measurement(
     @ManyToOne
     @JoinColumn
     var sensorItem: SensorItem,
-    val date: LocalDateTime,
+    val date: ZonedDateTime,
     var value: Double,
 )

@@ -9,7 +9,7 @@ import eu.deyanix.smartirrigation.repository.SectionRepository
 import eu.deyanix.smartirrigation.repository.SectionScheduleRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.util.stream.Stream
 
 @Service
@@ -37,7 +37,7 @@ class SectionService(
 		getSections(installationRepository.findById(installationId).orElseThrow())
 
 	@Transactional
-	fun stop(section: Section, dateFrom: LocalDateTime, dateTo: LocalDateTime) {
+	fun stop(section: Section, dateFrom: ZonedDateTime, dateTo: ZonedDateTime) {
 		sectionScheduleService.ensureSchedule(SectionSchedule(
 			section = section,
 			start = dateFrom,
@@ -65,7 +65,7 @@ class SectionService(
 		val section = sectionRepository.findById(sectionId)
 			.orElseThrow()
 
-		val now = LocalDateTime.now()
+		val now = ZonedDateTime.now()
 		stop(section, now, now)
 	}
 

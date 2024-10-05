@@ -1,7 +1,7 @@
 package eu.deyanix.smartirrigation.dao
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @Entity
 @Table(schema = "irrigation")
@@ -12,7 +12,7 @@ data class SectionSchedule(
 	@ManyToOne
 	@JoinColumn
 	var section: Section,
-	var start: LocalDateTime,
-	var end: LocalDateTime,
+	var start: ZonedDateTime,
+	var end: ZonedDateTime,
 	var state: Boolean,
 )

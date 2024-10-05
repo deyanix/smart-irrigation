@@ -9,13 +9,13 @@
 
       <template #actions>
         <q-btn round flat icon="more_vert" />
-        <AppPageHeaderButton
-          icon="add"
-          color="primary"
-          :to="{ name: 'SectionCreate' }"
-        >
-          Nowa sekcja
-        </AppPageHeaderButton>
+        <!--        <AppPageHeaderButton-->
+        <!--          icon="add"-->
+        <!--          color="primary"-->
+        <!--          :to="{ name: 'SectionCreate' }"-->
+        <!--        >-->
+        <!--          Nowa sekcja-->
+        <!--        </AppPageHeaderButton>-->
       </template>
     </AppPageHeader>
 

@@ -7,12 +7,18 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import java.io.IOException
+import java.time.ZonedDateTime
 
 @Tag(name = "GPIO")
 @RestController
 class GpioController(
 	private val gpioService: GpioService,
 ) {
+	@GetMapping("/gpio/time")
+	fun getTime(): ZonedDateTime? {
+		return ZonedDateTime.now()
+	}
+
 	@GetMapping("/gpio/{pin}")
 	@Throws(IOException::class)
 	fun state(@PathVariable pin: Int): Boolean? {

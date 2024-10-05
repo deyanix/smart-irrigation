@@ -103,7 +103,7 @@ export const SerializerUtilities = {
             result = set(
               result,
               path,
-              dayjs(value).format('YYYY-MM-DDTHH:mm:ss')
+              dayjs(value).format('YYYY-MM-DDTHH:mm:ssZ')
             );
           }
           break;

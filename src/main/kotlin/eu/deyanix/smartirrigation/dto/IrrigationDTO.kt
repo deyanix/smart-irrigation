@@ -1,14 +1,14 @@
 package eu.deyanix.smartirrigation.dto
 
 import eu.deyanix.smartirrigation.dao.Irrigation
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 data class IrrigationDTO(
 	val id: Int,
 	val sectionId: Int,
 	val sectionName: String,
-	val start: LocalDateTime,
-	val end: LocalDateTime,
+	val start: ZonedDateTime,
+	val end: ZonedDateTime,
 	val finished: Boolean,
 ) {
 	constructor(irrigation: Irrigation) : this(

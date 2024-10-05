@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     id("org.springframework.boot") version "3.3.0"
@@ -21,6 +22,26 @@ tasks.withType<KotlinCompile> {
 
 tasks.getByName<Jar>("jar") {
     enabled = false
+}
+
+tasks.register<Exec>("buildFrontend") {
+    workingDir = file("src/vue")
+    commandLine("npm.cmd", "install")
+    commandLine("npm.cmd", "run", "build")
+}
+
+tasks.register<Copy>("copyFrontend") {
+    dependsOn("buildFrontend")
+    from("src/vue/dist/spa")
+    into("src/main/resources/static")
+}
+
+tasks.getByName("processResources") {
+    dependsOn("copyFrontend")
+}
+
+tasks.named<BootJar>("bootJar") {
+    exclude("application.properties")
 }
 
 tasks.test {

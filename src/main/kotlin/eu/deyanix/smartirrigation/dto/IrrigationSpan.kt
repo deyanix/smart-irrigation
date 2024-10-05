@@ -1,19 +1,19 @@
 package eu.deyanix.smartirrigation.dto
 
-import eu.deyanix.smartirrigation.utils.LocalTimeSpan
+import eu.deyanix.smartirrigation.utils.TimeSpan
 
 
 data class IrrigationSpan(
-	val timeSpan: LocalTimeSpan,
+	val timeSpan: TimeSpan,
 	val state: Boolean,
 	val sources: Array<IrrigationSource>,
 ) {
-	fun merge(other: IrrigationSpan, timeSpan: LocalTimeSpan): IrrigationSpan =
+	fun merge(other: IrrigationSpan, timeSpan: TimeSpan): IrrigationSpan =
 		IrrigationSpan(
 			timeSpan = timeSpan,
 			state = state || other.state,
 			sources = listOf(*sources, *other.sources)
-				.filter { timeSpan.isOverlap(LocalTimeSpan(it.start, it.end)) }
+				.filter { timeSpan.isOverlap(TimeSpan(it.start, it.end)) }
 				.distinct()
 				.toTypedArray()
 		)

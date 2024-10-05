@@ -9,7 +9,9 @@ declare module 'vue' {
 }
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/',
+  baseURL: process.env.DEV
+    ? 'http://localhost:8080/'
+    : window.location.protocol + '//' + window.location.host,
 });
 
 export default boot(({ app }) => {

@@ -4,13 +4,13 @@ import eu.deyanix.smartirrigation.dao.Installation
 import eu.deyanix.smartirrigation.dao.Section
 import eu.deyanix.smartirrigation.dto.*
 import eu.deyanix.smartirrigation.repository.*
-import eu.deyanix.smartirrigation.utils.LocalTimeSpan
-import eu.deyanix.smartirrigation.utils.LocalTimeSpanBuilder
+import eu.deyanix.smartirrigation.utils.TimeSpan
+import eu.deyanix.smartirrigation.utils.TimeSpanBuilder
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.DayOfWeek
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import java.time.LocalTime
 
 @Service
@@ -56,10 +56,10 @@ class IrrigationService(
 	}
 
 	@Transactional(readOnly = true)
-	fun getSlotSpans(section: Section, dateFrom: LocalDateTime): IrrigationSpanCollection {
+	fun getSlotSpans(section: Section, dateFrom: ZonedDateTime): IrrigationSpanCollection {
 		val spans = sectionSlotRepository.findAllBySection(section)
 			.flatMap { slot ->
-				val builder = LocalTimeSpanBuilder(
+				val builder = TimeSpanBuilder(
 					ref = dateFrom,
 					start = slot.start,
 					end = slot.end,
@@ -84,16 +84,16 @@ class IrrigationService(
 	}
 
 	@Transactional(readOnly = true)
-	fun getSlotSpansInTime(section: Section, dateFrom: LocalDateTime, dateTo: LocalDateTime): IrrigationSpanCollection {
+	fun getSlotSpansInTime(section: Section, dateFrom: ZonedDateTime, dateTo: ZonedDateTime): IrrigationSpanCollection {
 		return getSlotSpans(section, dateFrom).onlyWhen(dateFrom, dateTo)
 	}
 
 	@Transactional(readOnly = true)
-	fun getScheduleSlots(section: Section, dateFrom: LocalDateTime?, dateTo: LocalDateTime?, state: Boolean?): IrrigationSpanCollection {
+	fun getScheduleSlots(section: Section, dateFrom: ZonedDateTime?, dateTo: ZonedDateTime?, state: Boolean?): IrrigationSpanCollection {
 		val spans = sectionScheduleRepository.findAllBySectionInTime(section, dateFrom, dateTo, state)
 			.map {
 				IrrigationSpan(
-					timeSpan = LocalTimeSpan(start = it.start, end = it.end),
+					timeSpan = TimeSpan(start = it.start, end = it.end),
 					state = it.state,
 					sources = arrayOf(IrrigationSource.SectionScheduleSource(it))
 				)
@@ -105,7 +105,7 @@ class IrrigationService(
 
 	@Transactional(readOnly = true)
 	fun getUpcomingIrrigationsBySection(section: Section): IrrigationSpanCollection {
-		val now = LocalDateTime.now()
+		val now = ZonedDateTime.now()
 		val localMin = now.minusDays(1).with(LocalTime.MIN)
 		val localMax = now.plusDays(7).with(LocalTime.MAX)
 

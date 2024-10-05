@@ -1,28 +1,28 @@
 package eu.deyanix.smartirrigation.utils
 
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
-class LocalTimeSpan(
-	val start: LocalDateTime,
-	val end: LocalDateTime
+class TimeSpan(
+	val start: ZonedDateTime,
+	val end: ZonedDateTime
 ) {
-	fun isBetween(date: LocalDateTime): Boolean {
+	fun isBetween(date: ZonedDateTime): Boolean {
 		return date in start..end
 	}
 
-	fun isOverlap(other: LocalTimeSpan): Boolean {
+	fun isOverlap(other: TimeSpan): Boolean {
 		return start <= other.end && end >= other.start
 	}
 
-	fun isContains(other: LocalTimeSpan): Boolean {
+	fun isContains(other: TimeSpan): Boolean {
 		return isBetween(other.start) && isBetween(other.end)
 	}
 
-	fun isWithin(other: LocalTimeSpan): Boolean {
+	fun isWithin(other: TimeSpan): Boolean {
 		return other.isContains(this)
 	}
 
-	fun exclude(other: LocalTimeSpan): Array<LocalTimeSpan> {
+	fun exclude(other: TimeSpan): Array<TimeSpan> {
 		if (isWithin(other)) {
 			return arrayOf()
 		}
@@ -31,38 +31,38 @@ class LocalTimeSpan(
 			return arrayOf(this)
 		}
 
-		val result = mutableListOf<LocalTimeSpan>()
+		val result = mutableListOf<TimeSpan>()
 		if (start < other.start)
-			result.add(LocalTimeSpan(start, other.start))
+			result.add(TimeSpan(start, other.start))
 		if (end > other.end)
-			result.add(LocalTimeSpan(other.end, end))
+			result.add(TimeSpan(other.end, end))
 
 		return result.toTypedArray()
 	}
 
-	fun intersection(other: LocalTimeSpan): LocalTimeSpan? {
+	fun intersection(other: TimeSpan): TimeSpan? {
 		if (!isOverlap(other)) {
 			return null
 		}
 
-		return LocalTimeSpan(
-			start = LocalDateTimes.max(start, other.start),
-			end = LocalDateTimes.min(end, other.end),
+		return TimeSpan(
+			start = ZonedDateTimes.max(start, other.start),
+			end = ZonedDateTimes.min(end, other.end),
 		)
 	}
 
-	fun sum(other: LocalTimeSpan): LocalTimeSpan? {
+	fun sum(other: TimeSpan): TimeSpan? {
 		if (!isOverlap(other)) {
 			return null
 		}
 
-		return LocalTimeSpan(
-			start = LocalDateTimes.min(start, other.start),
-			end = LocalDateTimes.max(end, other.end),
+		return TimeSpan(
+			start = ZonedDateTimes.min(start, other.start),
+			end = ZonedDateTimes.max(end, other.end),
 		)
 	}
 
-	fun union(other: LocalTimeSpan): Array<LocalTimeSpan> {
+	fun union(other: TimeSpan): Array<TimeSpan> {
 		val result = sum(other)
 
 		if (result != null) {
@@ -75,7 +75,7 @@ class LocalTimeSpan(
 		if (this === other) return true
 		if (javaClass != other?.javaClass) return false
 
-		other as LocalTimeSpan
+		other as TimeSpan
 
 		if (start != other.start) return false
 		if (end != other.end) return false

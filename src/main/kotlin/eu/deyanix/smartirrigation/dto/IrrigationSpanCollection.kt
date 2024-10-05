@@ -1,7 +1,7 @@
 package eu.deyanix.smartirrigation.dto
 
-import eu.deyanix.smartirrigation.utils.LocalTimeSpan
-import java.time.LocalDateTime
+import eu.deyanix.smartirrigation.utils.TimeSpan
+import java.time.ZonedDateTime
 
 class IrrigationSpanCollection(
 	val spans: List<IrrigationSpan>,
@@ -68,35 +68,35 @@ class IrrigationSpanCollection(
 		)
 	}
 
-	fun onlyWhen(date: LocalDateTime): IrrigationSpanCollection {
+	fun onlyWhen(date: ZonedDateTime): IrrigationSpanCollection {
 		return IrrigationSpanCollection(
 			spans = spans.filter { it.timeSpan.isBetween(date) }
 		)
 	}
 
 	fun onlyNow(): IrrigationSpanCollection {
-		return onlyWhen(LocalDateTime.now())
+		return onlyWhen(ZonedDateTime.now())
 	}
 
-	fun onlyWhen(span: LocalTimeSpan): IrrigationSpanCollection {
+	fun onlyWhen(span: TimeSpan): IrrigationSpanCollection {
 		return IrrigationSpanCollection(
 			spans = spans
 				.filter { it.timeSpan.isOverlap(span) }
 		)
 	}
 
-	fun onlyWhen(start: LocalDateTime, end: LocalDateTime): IrrigationSpanCollection {
-		return onlyWhen(LocalTimeSpan(start, end))
+	fun onlyWhen(start: ZonedDateTime, end: ZonedDateTime): IrrigationSpanCollection {
+		return onlyWhen(TimeSpan(start, end))
 	}
 
-	fun onlyBefore(date: LocalDateTime): IrrigationSpanCollection {
+	fun onlyBefore(date: ZonedDateTime): IrrigationSpanCollection {
 		return IrrigationSpanCollection(
 			spans = spans
 				.filter { it.timeSpan.start <= date }
 		)
 	}
 
-	fun onlyAfter(date: LocalDateTime): IrrigationSpanCollection {
+	fun onlyAfter(date: ZonedDateTime): IrrigationSpanCollection {
 		return IrrigationSpanCollection(
 			spans = spans
 				.filter { it.timeSpan.end >= date }

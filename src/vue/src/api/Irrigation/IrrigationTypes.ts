@@ -6,6 +6,8 @@ export interface IrrigationModel {
   start: Date;
   end: Date;
   finished: boolean;
+  sectionId: number;
+  sectionName: string;
 }
 
 export const SerializerIrrigationDeclaration: SerializerDeclaration<IrrigationModel> =
