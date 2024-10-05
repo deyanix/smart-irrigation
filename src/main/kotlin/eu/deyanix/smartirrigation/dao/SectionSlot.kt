@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import java.time.LocalTime
 
 @Entity
+@Table(schema = "irrigation")
 data class SectionSlot(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

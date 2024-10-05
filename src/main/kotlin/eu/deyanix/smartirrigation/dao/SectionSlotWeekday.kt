@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import java.io.Serializable
 
 @Entity
+@Table(schema = "irrigation")
 @IdClass(SectionSlotWeekday.SectionSlotWeekdayId::class)
 data class SectionSlotWeekday(
 	@Id

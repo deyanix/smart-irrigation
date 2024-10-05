@@ -1,6 +1,10 @@
 package eu.deyanix.smartirrigation.configurator
 
+import com.jayway.jsonpath.DocumentContext
+import com.jayway.jsonpath.JsonPath
 import eu.deyanix.smartirrigation.configuration.TtnConfiguration
+import eu.deyanix.smartirrigation.repository.SensorRepository
+import eu.deyanix.smartirrigation.service.SenseCapService
 import org.bson.Document
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.slf4j.Logger
@@ -8,7 +12,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.integration.annotation.ServiceActivator
 import org.springframework.integration.channel.DirectChannel
 import org.springframework.integration.core.MessageProducer
@@ -24,7 +27,7 @@ import org.springframework.messaging.MessageHandler
 @ConditionalOnProperty("application.ttn.enabled")
 class MqttConfigurator(
 	private val ttnConfiguration: TtnConfiguration,
-	private val mongo: MongoTemplate
+	private val sensorRepository: SensorRepository,
 ) {
 	private final val logger: Logger = LoggerFactory.getLogger(MqttConfigurator::class.java)
 
@@ -67,9 +70,14 @@ class MqttConfigurator(
 
 	@Bean
 	@ServiceActivator(inputChannel = "mqttInputChannel")
-	fun handler(): MessageHandler {
-		return MessageHandler {
-			mongo.insert(Document.parse(it.payload.toString()), "ttn_up")
+	fun handler(senseCapService: SenseCapService): MessageHandler {
+		return MessageHandler { message ->
+			try {
+				val text = message.payload.toString()
+				senseCapService.handleMessage(text)
+			} catch (ex: Exception) {
+				ex.printStackTrace()
+			}
 		}
 	}
 }

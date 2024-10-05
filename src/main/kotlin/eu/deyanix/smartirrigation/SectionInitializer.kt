@@ -7,7 +7,9 @@ import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
 @Component
-class SectionInitializer(private val sectionValveService: SectionValveService) {
+class SectionInitializer(
+	private val sectionValveService: SectionValveService,
+) {
 	@PostConstruct
 	fun init() {
 		sectionValveService.resetWithGpio()

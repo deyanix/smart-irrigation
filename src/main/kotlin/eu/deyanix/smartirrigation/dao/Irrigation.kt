@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
+@Table(schema = "irrigation")
 data class Irrigation(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

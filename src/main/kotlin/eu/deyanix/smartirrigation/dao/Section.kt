@@ -3,6 +3,7 @@ package eu.deyanix.smartirrigation.dao
 import jakarta.persistence.*
 
 @Entity
+@Table(schema = "irrigation")
 data class Section(
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
