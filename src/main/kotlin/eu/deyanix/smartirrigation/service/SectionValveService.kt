@@ -10,16 +10,16 @@ import java.time.ZonedDateTime
 
 @Service
 class SectionValveService(
-	private val gpioService: GpioService,
+	private val raspberryPiService: RaspberryPiService,
 	private val irrigationRepository: IrrigationRepository,
 	private val sectionRepository: SectionRepository,
 	private val irrigationService: IrrigationService,
 ) {
 	fun setOpen(section: Section, irrigating: Boolean) =
-		gpioService.setState(section.gpio, !irrigating)
+		raspberryPiService.setState(section.gpio, !irrigating)
 
 	fun isOpen(section: Section): Boolean =
-		!gpioService.getState(section.gpio)
+		!raspberryPiService.getState(section.gpio)
 
 	@Transactional
 	fun start(section: Section) {
