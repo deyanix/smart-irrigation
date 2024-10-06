@@ -6,6 +6,7 @@ import eu.deyanix.smartirrigation.dao.Sensor
 import eu.deyanix.smartirrigation.repository.MeasurementRepository
 import eu.deyanix.smartirrigation.repository.SensorItemRepository
 import eu.deyanix.smartirrigation.repository.SensorRepository
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.ZonedDateTime
@@ -16,7 +17,14 @@ class SenseCapService(
 	private val sensorRepository: SensorRepository,
 	private val measurementRepository: MeasurementRepository,
 	private val sensorItemRepository: SensorItemRepository,
+	private val mongo: MongoTemplate,
 ) {
+	@Transactional
+	fun migrate() {
+		mongo.getCollection("ttn_up").find()
+			.forEach { handleMessage(it.toJson()) }
+	}
+
 	@Transactional
 	fun handleMessage(message: String) {
 		val context = JsonPath.parse(message)

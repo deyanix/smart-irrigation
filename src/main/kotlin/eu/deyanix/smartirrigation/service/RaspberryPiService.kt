@@ -8,7 +8,9 @@ import java.io.File
 import java.io.IOException
 
 @Service
-class RaspberryPiService(private val pi4j: Context?) {
+class RaspberryPiService(
+	private val pi4j: Context?,
+) {
 	private val mock: MutableMap<Int, Boolean> = mutableMapOf()
 
 	fun getState(address: Int): Boolean {

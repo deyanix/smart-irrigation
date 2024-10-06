@@ -1,6 +1,7 @@
 package eu.deyanix.smartirrigation.controller
 
 import eu.deyanix.smartirrigation.service.RaspberryPiService
+import eu.deyanix.smartirrigation.service.SenseCapService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -13,10 +14,16 @@ import java.time.ZonedDateTime
 @RestController
 class GpioController(
 	private val raspberryPiService: RaspberryPiService,
+	private val senseCapService: SenseCapService,
 ) {
 	@GetMapping("/gpio/time")
 	fun getTime(): ZonedDateTime? {
 		return ZonedDateTime.now()
+	}
+
+	@PostMapping("/gpio/migrate")
+	fun migrate() {
+		senseCapService.migrate()
 	}
 
 	@GetMapping("/gpio/{pin}")
