@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 import java.io.IOException
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 @Tag(name = "GPIO")
 @RestController
@@ -17,8 +17,8 @@ class GpioController(
 	private val senseCapService: SenseCapService,
 ) {
 	@GetMapping("/gpio/time")
-	fun getTime(): ZonedDateTime? {
-		return ZonedDateTime.now()
+	fun getTime(): OffsetDateTime? {
+		return OffsetDateTime.now()
 	}
 
 	@PostMapping("/gpio/migrate")

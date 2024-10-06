@@ -2,12 +2,12 @@ package eu.deyanix.smartirrigation.dto
 
 import eu.deyanix.smartirrigation.dao.SectionSlot
 import eu.deyanix.smartirrigation.dao.SectionSlotWeekday
-import java.time.LocalTime
+import java.time.OffsetTime
 
 data class SectionSlotListDTO(
 	val id: Int,
-	val start: LocalTime,
-	val end: LocalTime,
+	val start: OffsetTime,
+	val end: OffsetTime,
 	val weekdays: Array<Int>,
 ) {
 	constructor(sectionSlot: SectionSlot) : this(

@@ -41,7 +41,7 @@ export const SerializerUtilities = {
           break;
         case 'time':
           if (isString(value)) {
-            result = set(result, path, dayjs(value, 'HH:mm:ss').toDate());
+            result = set(result, path, dayjs(value, 'HH:mmZ').toDate());
           }
           break;
         case 'weekdays':
@@ -118,7 +118,7 @@ export const SerializerUtilities = {
           break;
         case 'time':
           if (value instanceof Date) {
-            result = set(result, path, dayjs(value).format('HH:mm:ss.SSS'));
+            result = set(result, path, dayjs(value).format('HH:mm:ss.SSSZ'));
           }
           break;
         case 'weekdays':

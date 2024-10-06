@@ -1,14 +1,14 @@
 package eu.deyanix.smartirrigation.utils
 
 import java.time.DayOfWeek
-import java.time.LocalTime
-import java.time.ZonedDateTime
+import java.time.OffsetTime
+import java.time.OffsetDateTime
 import java.time.temporal.TemporalAdjusters
 
 class TimeSpanBuilder(
-	private val ref: ZonedDateTime,
-	private val start: LocalTime,
-	private val end: LocalTime,
+	private val ref: OffsetDateTime,
+	private val start: OffsetTime,
+	private val end: OffsetTime,
 ) {
 	fun next(startWeekday: DayOfWeek): TimeSpan {
 		val endWeekday = startWeekday.plus(if (start < end) 0 else 1)
@@ -22,7 +22,7 @@ class TimeSpanBuilder(
 			)
 		}
 
-		if (endWeekday == ref.dayOfWeek && ref.toLocalTime() > end) {
+		if (endWeekday == ref.dayOfWeek && ref.toOffsetTime() > end) {
 			return TimeSpan(
 				start = ref.with(TemporalAdjusters.next(startWeekday)).with(start),
 				end = ref.with(TemporalAdjusters.next(endWeekday)).with(end),

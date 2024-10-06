@@ -1,12 +1,12 @@
 package eu.deyanix.smartirrigation.utils
 
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 class TimeSpan(
-	val start: ZonedDateTime,
-	val end: ZonedDateTime
+	val start: OffsetDateTime,
+	val end: OffsetDateTime
 ) {
-	fun isBetween(date: ZonedDateTime): Boolean {
+	fun isBetween(date: OffsetDateTime): Boolean {
 		return date in start..end
 	}
 
@@ -46,8 +46,8 @@ class TimeSpan(
 		}
 
 		return TimeSpan(
-			start = ZonedDateTimes.max(start, other.start),
-			end = ZonedDateTimes.min(end, other.end),
+			start = OffsetDateTimes.max(start, other.start),
+			end = OffsetDateTimes.min(end, other.end),
 		)
 	}
 
@@ -57,8 +57,8 @@ class TimeSpan(
 		}
 
 		return TimeSpan(
-			start = ZonedDateTimes.min(start, other.start),
-			end = ZonedDateTimes.max(end, other.end),
+			start = OffsetDateTimes.min(start, other.start),
+			end = OffsetDateTimes.max(end, other.end),
 		)
 	}
 
@@ -90,6 +90,6 @@ class TimeSpan(
 	}
 
 	override fun toString(): String {
-		return "LocalTimeSpan(start=$start, end=$end)"
+		return "TimeSpan(start=$start, end=$end)"
 	}
 }

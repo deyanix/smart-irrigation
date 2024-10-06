@@ -9,7 +9,7 @@ import eu.deyanix.smartirrigation.repository.SensorRepository
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 
 @Service
@@ -34,7 +34,7 @@ class SenseCapService(
 			.getOrNull() ?: return
 
 		val receivedAtString = context.read<String>("$.received_at")
-		val receivedAt = ZonedDateTime.parse(receivedAtString)
+		val receivedAt = OffsetDateTime.parse(receivedAtString)
 
 		val measurements = context.read<List<Any>>("$.uplink_message.decoded_payload.messages")
 			.mapNotNull { handleMeasurement(sensor, receivedAt, it) }
@@ -43,7 +43,7 @@ class SenseCapService(
 	}
 
 	@Transactional
-	fun handleMeasurement(sensor: Sensor, date: ZonedDateTime, message: Any): Measurement? {
+	fun handleMeasurement(sensor: Sensor, date: OffsetDateTime, message: Any): Measurement? {
 		val context = JsonPath.parse(message)
 
 		val key = when (context.read<String?>("$.type")) {

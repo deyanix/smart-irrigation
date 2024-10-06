@@ -1,7 +1,7 @@
 package eu.deyanix.smartirrigation.dao
 
 import jakarta.persistence.*
-import java.time.LocalTime
+import java.time.OffsetTime
 
 @Entity
 @Table(schema = "irrigation")
@@ -12,8 +12,8 @@ data class SectionSlot(
 	@ManyToOne
 	@JoinColumn
 	var section: Section,
-	var start: LocalTime,
-	var end: LocalTime,
+	var start: OffsetTime,
+	var end: OffsetTime,
 	@OneToMany(mappedBy = "sectionSlot", cascade = [CascadeType.ALL], orphanRemoval = true)
 	var weekdays: MutableList<SectionSlotWeekday> = mutableListOf(),
 )

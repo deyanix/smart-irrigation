@@ -1,7 +1,7 @@
 package eu.deyanix.smartirrigation.dto
 
 import eu.deyanix.smartirrigation.utils.TimeSpan
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 class IrrigationSpanCollection(
 	val spans: List<IrrigationSpan>,
@@ -68,14 +68,14 @@ class IrrigationSpanCollection(
 		)
 	}
 
-	fun onlyWhen(date: ZonedDateTime): IrrigationSpanCollection {
+	fun onlyWhen(date: OffsetDateTime): IrrigationSpanCollection {
 		return IrrigationSpanCollection(
 			spans = spans.filter { it.timeSpan.isBetween(date) }
 		)
 	}
 
 	fun onlyNow(): IrrigationSpanCollection {
-		return onlyWhen(ZonedDateTime.now())
+		return onlyWhen(OffsetDateTime.now())
 	}
 
 	fun onlyWhen(span: TimeSpan): IrrigationSpanCollection {
@@ -85,18 +85,18 @@ class IrrigationSpanCollection(
 		)
 	}
 
-	fun onlyWhen(start: ZonedDateTime, end: ZonedDateTime): IrrigationSpanCollection {
+	fun onlyWhen(start: OffsetDateTime, end: OffsetDateTime): IrrigationSpanCollection {
 		return onlyWhen(TimeSpan(start, end))
 	}
 
-	fun onlyBefore(date: ZonedDateTime): IrrigationSpanCollection {
+	fun onlyBefore(date: OffsetDateTime): IrrigationSpanCollection {
 		return IrrigationSpanCollection(
 			spans = spans
 				.filter { it.timeSpan.start <= date }
 		)
 	}
 
-	fun onlyAfter(date: ZonedDateTime): IrrigationSpanCollection {
+	fun onlyAfter(date: OffsetDateTime): IrrigationSpanCollection {
 		return IrrigationSpanCollection(
 			spans = spans
 				.filter { it.timeSpan.end >= date }

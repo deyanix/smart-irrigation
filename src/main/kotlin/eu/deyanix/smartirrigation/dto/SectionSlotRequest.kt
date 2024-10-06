@@ -2,11 +2,11 @@ package eu.deyanix.smartirrigation.dto
 
 import eu.deyanix.smartirrigation.dao.SectionSlot
 import eu.deyanix.smartirrigation.dao.SectionSlotWeekday
-import java.time.LocalTime
+import java.time.OffsetTime
 
 data class SectionSlotRequest(
-	val start: LocalTime,
-	val end: LocalTime,
+	val start: OffsetTime,
+	val end: OffsetTime,
 	val weekdays: Array<Int>,
 ) {
 	fun applyTo(slot: SectionSlot) {

@@ -9,7 +9,7 @@ import eu.deyanix.smartirrigation.service.SectionValveService
 import jakarta.annotation.PostConstruct
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 import java.util.concurrent.TimeUnit
 import kotlin.jvm.optionals.getOrNull
 
@@ -42,7 +42,7 @@ class MainScheduler(
 
 		measurementRepository.saveAndFlush(Measurement(
 			sensorItem = sensorItem,
-			date = ZonedDateTime.now(),
+			date = OffsetDateTime.now(),
 			value = value,
 		))
 	}

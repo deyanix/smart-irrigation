@@ -6,7 +6,7 @@ import eu.deyanix.smartirrigation.repository.IrrigationRepository
 import eu.deyanix.smartirrigation.repository.SectionRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 @Service
 class SectionValveService(
@@ -34,7 +34,7 @@ class SectionValveService(
 
 		irrigations.first().apply {
 			finished = false
-			end = ZonedDateTime.now()
+			end = OffsetDateTime.now()
 		}
 
 		irrigationRepository.saveAllAndFlush(irrigations)

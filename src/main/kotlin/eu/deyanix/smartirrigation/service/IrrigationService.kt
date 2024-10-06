@@ -10,8 +10,8 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.DayOfWeek
-import java.time.ZonedDateTime
-import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.time.OffsetTime
 
 @Service
 class IrrigationService(
@@ -56,7 +56,7 @@ class IrrigationService(
 	}
 
 	@Transactional(readOnly = true)
-	fun getSlotSpans(section: Section, dateFrom: ZonedDateTime): IrrigationSpanCollection {
+	fun getSlotSpans(section: Section, dateFrom: OffsetDateTime): IrrigationSpanCollection {
 		val spans = sectionSlotRepository.findAllBySection(section)
 			.flatMap { slot ->
 				val builder = TimeSpanBuilder(
@@ -84,12 +84,12 @@ class IrrigationService(
 	}
 
 	@Transactional(readOnly = true)
-	fun getSlotSpansInTime(section: Section, dateFrom: ZonedDateTime, dateTo: ZonedDateTime): IrrigationSpanCollection {
+	fun getSlotSpansInTime(section: Section, dateFrom: OffsetDateTime, dateTo: OffsetDateTime): IrrigationSpanCollection {
 		return getSlotSpans(section, dateFrom).onlyWhen(dateFrom, dateTo)
 	}
 
 	@Transactional(readOnly = true)
-	fun getScheduleSlots(section: Section, dateFrom: ZonedDateTime?, dateTo: ZonedDateTime?, state: Boolean?): IrrigationSpanCollection {
+	fun getScheduleSlots(section: Section, dateFrom: OffsetDateTime?, dateTo: OffsetDateTime?, state: Boolean?): IrrigationSpanCollection {
 		val spans = sectionScheduleRepository.findAllBySectionInTime(section, dateFrom, dateTo, state)
 			.map {
 				IrrigationSpan(
@@ -105,9 +105,9 @@ class IrrigationService(
 
 	@Transactional(readOnly = true)
 	fun getUpcomingIrrigationsBySection(section: Section): IrrigationSpanCollection {
-		val now = ZonedDateTime.now()
-		val localMin = now.minusDays(1).with(LocalTime.MIN)
-		val localMax = now.plusDays(7).with(LocalTime.MAX)
+		val now = OffsetDateTime.now()
+		val localMin = now.minusDays(1).with(OffsetTime.MIN)
+		val localMax = now.plusDays(7).with(OffsetTime.MAX)
 
 		val sectionSlotSpans = getSlotSpans(section, now)
 		val schedulePositiveSpans = getScheduleSlots(section, localMin, localMax, true)
@@ -127,10 +127,12 @@ class IrrigationService(
 	@Transactional(readOnly = true)
 	fun getUpcomingIrrigationsByInstallation(installation: Installation): IrrigationSpanCollection {
 		val spanCollections = sectionRepository.findAllByInstallation(installation)
-			.map {getUpcomingIrrigationsBySection(it)}
+			.map { getUpcomingIrrigationsBySection(it) }
+			.flatMap { it.spans.stream() }
 			.toList()
+			.sortedBy { it.timeSpan.start }
 
-		return IrrigationSpanCollection.ofCollections(spanCollections)
+		return IrrigationSpanCollection(spanCollections)
 	}
 
 	@Transactional(readOnly = true)
