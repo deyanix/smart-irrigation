@@ -25,7 +25,7 @@ export function createDashboardStore() {
           installationId.value
         ),
         IrrigationService.searchByInstallation(installationId.value, {
-          pageSize: 5,
+          pageSize: 6,
         }).then((result) => result.rows),
       ]);
     } finally {
