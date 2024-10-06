@@ -41,10 +41,15 @@ class SectionValveService(
 	}
 
 	@Transactional
-	fun stop(section: Section) {
+	fun stop(section: Section, continuous: Boolean = false) {
 		setOpen(section, false)
 		val irrigations = irrigationRepository.findAllUnfinishedBySection(section).toList()
 		irrigations.forEach { it.finished = true }
+		if (continuous) {
+			irrigations.first().apply {
+				end = OffsetDateTime.now()
+			}
+		}
 
 		irrigationRepository.saveAllAndFlush(irrigations)
 	}
@@ -67,7 +72,7 @@ class SectionValveService(
 		if (shouldState) {
 			start(section)
 		} else {
-			stop(section)
+			stop(section, isOpen(section))
 		}
 	}
 
