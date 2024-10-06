@@ -28,14 +28,14 @@ class SenseCapService(
 		val receivedAtString = context.read<String>("$.received_at")
 		val receivedAt = ZonedDateTime.parse(receivedAtString)
 
-		context.read<List<Any>>("$.uplink_message.decoded_payload.messages")
-			.forEach {
-				handleMeasurement(sensor, receivedAt, it)
-			}
+		val measurements = context.read<List<Any>>("$.uplink_message.decoded_payload.messages")
+			.mapNotNull { handleMeasurement(sensor, receivedAt, it) }
+
+		measurementRepository.saveAllAndFlush(measurements)
 	}
 
 	@Transactional
-	fun handleMeasurement(sensor: Sensor, date: ZonedDateTime, message: Any) {
+	fun handleMeasurement(sensor: Sensor, date: ZonedDateTime, message: Any): Measurement? {
 		val context = JsonPath.parse(message)
 
 		val key = when (context.read<String?>("$.type")) {
@@ -43,30 +43,30 @@ class SenseCapService(
 				4102 -> "temperature"
 				4103 -> "moisture"
 				4108 -> "conductivity"
-				else -> return
+				else -> return null
 			}
-			"battery" -> "battery"
-			else -> return
+			"upload_battery" -> "battery"
+			else -> return null
 		}
 
 		val sensorItem = sensorItemRepository.findByKey(sensor, key)
-			.getOrNull() ?: return
+			.getOrNull() ?: return null
 
 		val value = when (key) {
 			"temperature", "moisture", "conductivity" -> context.read<Any>("$.measurementValue")
 			"battery" -> context.read<Any>("$.battery")
-			else -> return
+			else -> return null
 		}
 
-		measurementRepository.saveAndFlush(Measurement(
+		return Measurement(
 			sensorItem = sensorItem,
 			date = date,
 			value = when (value) {
 				is Double -> value
 				is Int -> value.toDouble()
 				is String -> value.toDouble()
-				else -> return
+				else -> return null
 			},
-		))
+		)
 	}
 }
