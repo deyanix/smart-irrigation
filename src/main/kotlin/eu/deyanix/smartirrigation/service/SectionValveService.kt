@@ -55,11 +55,10 @@ class SectionValveService(
 	}
 
 	@Transactional
-	fun resetWithGpio() {
+	fun resetWithGpio(continuous: Boolean = false) {
 		sectionRepository.findAll()
 			.forEach { section ->
-				setOpen(section, false)
-				stop(section)
+				stop(section, continuous && isOpen(section))
 			}
 	}
 

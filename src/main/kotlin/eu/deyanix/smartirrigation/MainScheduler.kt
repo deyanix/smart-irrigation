@@ -7,6 +7,7 @@ import eu.deyanix.smartirrigation.repository.SensorRepository
 import eu.deyanix.smartirrigation.service.RaspberryPiService
 import eu.deyanix.smartirrigation.service.SectionValveService
 import jakarta.annotation.PostConstruct
+import jakarta.annotation.PreDestroy
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
@@ -24,6 +25,11 @@ class MainScheduler(
 	@PostConstruct
 	fun init() {
 		sectionValveService.resetWithGpio()
+	}
+
+	@PreDestroy
+	fun destroy() {
+		sectionValveService.resetWithGpio(true)
 	}
 
 	@Scheduled(fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
