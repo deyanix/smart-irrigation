@@ -14,7 +14,7 @@
       <div class="col-12 col-md-6">
         <DashboardLastIrrigations />
       </div>
-      <div v-for="sensor in sensors" :key="sensor.id" class="col-12">
+      <div v-for="sensor in sensors" :key="sensor.id" class="col-12 col-md-4">
         <DashboardSensor :sensor="sensor" />
       </div>
     </div>
