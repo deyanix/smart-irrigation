@@ -14,8 +14,8 @@
       <div class="col-12 col-md-6">
         <DashboardLastIrrigations />
       </div>
-      <div class="col-12">
-        <DashboardMeasurements />
+      <div v-for="sensor in sensors" :key="sensor.id" class="col-12">
+        <DashboardSensor :sensor="sensor" />
       </div>
     </div>
   </q-page>
@@ -25,7 +25,7 @@
 import { defineDashboardStore } from 'pages/Dashboard/_composables/useDashboardStore';
 import DashboardNearestIrrigations from 'pages/Dashboard/_components/DashboardNearestIrrigations.vue';
 import DashboardLastIrrigations from 'pages/Dashboard/_components/DashboardLastIrrigations.vue';
-import DashboardMeasurements from 'pages/Dashboard/_components/DashboardMeasurements.vue';
+import DashboardSensor from 'pages/Dashboard/_components/DashboardSensor.vue';
 
-defineDashboardStore();
+const { sensors } = defineDashboardStore();
 </script>

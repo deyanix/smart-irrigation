@@ -13,7 +13,7 @@ export const MeasurementService = {
     criteria: MeasurementCriteria
   ): Promise<MeasurementModel[]> {
     const response = await api.get(
-      `/sensors/any/items/${sensorItemId}/measurements`,
+      `/installations/any/sensors/any/items/${sensorItemId}/measurements`,
       {
         params: SerializerUtilities.serialize(
           criteria,

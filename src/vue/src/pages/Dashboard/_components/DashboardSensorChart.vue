@@ -1,16 +1,19 @@
 <template>
-  <AppCard>
-    <apexchart :series="series" :options="options" width="100%" height="200" />
-  </AppCard>
+  <apexchart :series="series" :options="options" width="100%" height="250" />
 </template>
 <script setup lang="ts">
 import { onBeforeMount, ref, shallowRef } from 'vue';
 import { MeasurementService } from 'src/api/Measurement/MeasurementService';
 import { ApexOptions } from 'apexcharts';
 import dayjs from 'dayjs';
+import { SensorItemModel } from 'src/api/Sensor';
 
 const dateTo = new Date();
 const dateFrom = dayjs(dateTo).add(-4, 'day').toDate();
+
+const props = defineProps<{
+  sensorItem: SensorItemModel;
+}>();
 
 const series = shallowRef<ApexAxisChartSeries>([]);
 
@@ -38,28 +41,25 @@ const options = ref<ApexOptions>({
       format: 'd MMM',
     },
   },
+  yaxis: {
+    title: {
+      text: `${props.sensorItem.measurementUnitName} [${props.sensorItem.measurementUnitSymbol}]`,
+    },
+  },
 });
 
 async function fetchMeasurements() {
-  const data = await MeasurementService.getMeasurements(2, {
+  const data = await MeasurementService.getMeasurements(props.sensorItem.id, {
     dateFrom,
     dateTo,
   });
 
-  for (let i = 0; i < data.length - 1; i++) {
-    const currentDate = data[i].date;
-    const nextDate = data[i + 1].date;
-    const diffDays =
-      (nextDate.getTime() - currentDate.getTime()) / (1000 * 60 * 60);
-
-    if (diffDays > 1) {
-      data.splice(i + 1, 0, { date: currentDate, value: null });
-      i++;
-    }
-  }
   series.value = [
     {
-      data: data.map((m) => [m.date.getTime(), m.value]),
+      data: data.map((m): [number, number | null] => [
+        m.date.getTime(),
+        m.value,
+      ]),
     },
   ];
 }

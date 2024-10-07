@@ -6,9 +6,13 @@ import eu.deyanix.smartirrigation.dto.MeasurementItem
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import java.time.OffsetDateTime
+import java.util.*
 import java.util.stream.Stream
 
 interface MeasurementRepository : JpaRepository<Measurement, Int> {
+	@Query("SELECT M FROM Measurement M WHERE M.sensorItem = :sensorItem ORDER BY M.date DESC LIMIT 1")
+	fun findLastBySensorItem(sensorItem: SensorItem): Optional<Measurement>
+
 	@Query("SELECT new eu.deyanix.smartirrigation.dto.MeasurementItem(" +
 			"	DATE_TRUNC('minute', m.date), " +
 			"	AVG(m.value) " +

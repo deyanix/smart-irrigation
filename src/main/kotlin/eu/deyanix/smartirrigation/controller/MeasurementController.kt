@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "Measurement")
 @RestController
 class MeasurementController(private val measurementService: MeasurementService) {
-	@GetMapping("/sensors/any/items/{sensorItemId}/measurements")
-	fun getInstallationIrrigations(@PathVariable sensorItemId: Int, @ParameterObject criteria: MeasurementCriteria): List<MeasurementItem> =
+	@GetMapping("/installations/any/sensors/any/items/{sensorItemId}/measurements")
+	fun getMeasurements(@PathVariable sensorItemId: Int, @ParameterObject criteria: MeasurementCriteria): List<MeasurementItem> =
 		measurementService.getMeasurements(sensorItemId, criteria)
-
 }

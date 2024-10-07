@@ -13,4 +13,7 @@ data class Sensor(
     @ManyToOne
     @JoinColumn
     var sensorType: SensorType,
+    @ManyToOne
+    @JoinColumn
+    var installation: Installation,
 )
