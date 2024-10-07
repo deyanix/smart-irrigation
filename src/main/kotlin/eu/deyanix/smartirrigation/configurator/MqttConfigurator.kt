@@ -1,11 +1,8 @@
 package eu.deyanix.smartirrigation.configurator
 
-import com.jayway.jsonpath.DocumentContext
-import com.jayway.jsonpath.JsonPath
 import eu.deyanix.smartirrigation.configuration.TtnConfiguration
-import eu.deyanix.smartirrigation.repository.SensorRepository
+import eu.deyanix.smartirrigation.repository.MeasurementRepository
 import eu.deyanix.smartirrigation.service.SenseCapService
-import org.bson.Document
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -27,7 +24,6 @@ import org.springframework.messaging.MessageHandler
 @ConditionalOnProperty("application.ttn.enabled")
 class MqttConfigurator(
 	private val ttnConfiguration: TtnConfiguration,
-	private val sensorRepository: SensorRepository,
 ) {
 	private final val logger: Logger = LoggerFactory.getLogger(MqttConfigurator::class.java)
 
@@ -70,11 +66,12 @@ class MqttConfigurator(
 
 	@Bean
 	@ServiceActivator(inputChannel = "mqttInputChannel")
-	fun handler(senseCapService: SenseCapService): MessageHandler {
+	fun handler(senseCapService: SenseCapService, measurementRepository: MeasurementRepository): MessageHandler {
 		return MessageHandler { message ->
 			try {
 				val text = message.payload.toString()
-				senseCapService.handleMessage(text)
+				val measurements = senseCapService.handleMessage(text)
+				measurementRepository.saveAllAndFlush(measurements)
 			} catch (ex: Exception) {
 				ex.printStackTrace()
 			}

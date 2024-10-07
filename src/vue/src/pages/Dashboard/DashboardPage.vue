@@ -14,6 +14,9 @@
       <div class="col-12 col-md-6">
         <DashboardLastIrrigations />
       </div>
+      <div class="col-12">
+        <DashboardMeasurements />
+      </div>
     </div>
   </q-page>
 </template>
@@ -22,6 +25,7 @@
 import { defineDashboardStore } from 'pages/Dashboard/_composables/useDashboardStore';
 import DashboardNearestIrrigations from 'pages/Dashboard/_components/DashboardNearestIrrigations.vue';
 import DashboardLastIrrigations from 'pages/Dashboard/_components/DashboardLastIrrigations.vue';
+import DashboardMeasurements from 'pages/Dashboard/_components/DashboardMeasurements.vue';
 
-const {} = defineDashboardStore();
+defineDashboardStore();
 </script>

@@ -8,7 +8,6 @@ import eu.deyanix.smartirrigation.repository.SensorItemRepository
 import eu.deyanix.smartirrigation.repository.SensorRepository
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
 import kotlin.jvm.optionals.getOrNull
 
@@ -19,30 +18,27 @@ class SenseCapService(
 	private val sensorItemRepository: SensorItemRepository,
 	private val mongo: MongoTemplate,
 ) {
-	@Transactional
 	fun migrate() {
 		mongo.getCollection("ttn_up").find()
-			.forEach { handleMessage(it.toJson()) }
+			.forEach {
+				measurementRepository.saveAll(handleMessage(it.toJson()))
+			}
 	}
 
-	@Transactional
-	fun handleMessage(message: String) {
+	fun handleMessage(message: String): List<Measurement> {
 		val context = JsonPath.parse(message)
 
 		val deviceId = context.read<String>("$.end_device_ids.device_id")
 		val sensor = sensorRepository.findByKey("SenseCAP", deviceId)
-			.getOrNull() ?: return
+			.getOrNull() ?: return listOf()
 
 		val receivedAtString = context.read<String>("$.received_at")
 		val receivedAt = OffsetDateTime.parse(receivedAtString)
 
-		val measurements = context.read<List<Any>>("$.uplink_message.decoded_payload.messages")
+		return context.read<List<Any>>("$.uplink_message.decoded_payload.messages")
 			.mapNotNull { handleMeasurement(sensor, receivedAt, it) }
-
-		measurementRepository.saveAllAndFlush(measurements)
 	}
 
-	@Transactional
 	fun handleMeasurement(sensor: Sensor, date: OffsetDateTime, message: Any): Measurement? {
 		val context = JsonPath.parse(message)
 
