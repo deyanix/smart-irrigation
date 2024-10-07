@@ -10,4 +10,8 @@ export const SensorService = {
       SensorDeclaration
     );
   },
+  async getSensor(sensorId: number): Promise<SensorModel> {
+    const response = await api.get(`/installations/any/sensors/${sensorId}`);
+    return SerializerUtilities.deserialize(response.data, SensorDeclaration);
+  },
 };

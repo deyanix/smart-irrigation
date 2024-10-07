@@ -45,6 +45,16 @@ const routes: RouteRecordRaw[] = [
             'pages/Section/Preview/UpcomingIrrigations/SectionUpcomingIrrigations.vue'
           ),
       },
+      {
+        name: 'SensorList',
+        path: '/sensors',
+        component: () => import('pages/Sensor/List/SensorList.vue'),
+      },
+      {
+        name: 'SensorPreview',
+        path: '/sensors/:id',
+        component: () => import('pages/Sensor/Preview/SensorPreview.vue'),
+      },
     ],
   },
 

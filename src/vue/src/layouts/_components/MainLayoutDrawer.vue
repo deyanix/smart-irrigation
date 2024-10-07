@@ -10,7 +10,6 @@
         label="Dashboard"
         :to="{ name: 'Dashboard' }"
       />
-      <!-- mdi-sprinkler-variant -->
       <MainLayoutDrawerItem
         icon="mdi-pipe"
         label="Sekcje"
@@ -20,11 +19,6 @@
         icon="mdi-router-wireless"
         label="Czujniki"
         :to="{ name: 'SensorList' }"
-      />
-      <MainLayoutDrawerItem
-        icon="settings"
-        label="Ustawienia"
-        :to="{ name: 'Settings' }"
       />
     </q-list>
   </q-drawer>

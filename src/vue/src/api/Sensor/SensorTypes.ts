@@ -6,8 +6,8 @@ export interface SensorItemModel {
   measurementUnitId: number;
   measurementUnitName: string;
   measurementUnitSymbol: string;
-  lastMeasurementDate: Date;
-  lastMeasurementValue: number;
+  lastMeasurementDate: Date | null;
+  lastMeasurementValue: number | null;
 }
 
 export const SensorItemDeclaration: SerializerDeclaration<SensorItemModel> = [

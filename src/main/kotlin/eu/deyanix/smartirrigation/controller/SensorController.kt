@@ -13,4 +13,8 @@ class SensorController(private val sensorService: SensorService) {
 	@GetMapping("/installations/{installationId}/sensors")
 	fun getSensors(@PathVariable installationId: Int): List<SensorResponse> =
 		sensorService.getSensors(installationId)
+
+	@GetMapping("/installations/any/sensors/{sensorId}")
+	fun getSensor(@PathVariable sensorId: Int): SensorResponse =
+		sensorService.getSensor(sensorId)
 }

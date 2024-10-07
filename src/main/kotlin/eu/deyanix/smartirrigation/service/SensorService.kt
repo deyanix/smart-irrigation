@@ -24,16 +24,27 @@ class SensorService(
 			.orElseThrow()
 
 		return sensorRepository.findAllByInstallation(installation)
-			.map { sensor ->
-				SensorResponse(
-					id = sensor.id,
-					name = sensor.name,
-					typeId = sensor.sensorType.id,
-					typeName = sensor.sensorType.name,
-					items = getSensorItems(sensor)
-				)
-			}
+			.map { getSensor(it) }
 			.toList()
+	}
+
+	@Transactional
+	fun getSensor(sensor: Sensor): SensorResponse {
+		return SensorResponse(
+			id = sensor.id,
+			name = sensor.name,
+			typeId = sensor.sensorType.id,
+			typeName = sensor.sensorType.name,
+			items = getSensorItems(sensor)
+		)
+	}
+
+	@Transactional
+	fun getSensor(sensorId: Int): SensorResponse {
+		val sensor = sensorRepository.findById(sensorId)
+			.orElseThrow()
+
+		return getSensor(sensor)
 	}
 
 	@Transactional

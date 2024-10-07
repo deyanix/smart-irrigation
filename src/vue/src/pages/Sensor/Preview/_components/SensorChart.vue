@@ -5,14 +5,12 @@
 import { onBeforeMount, ref, shallowRef } from 'vue';
 import { MeasurementService } from 'src/api/Measurement/MeasurementService';
 import { ApexOptions } from 'apexcharts';
-import dayjs from 'dayjs';
 import { SensorItemModel } from 'src/api/Sensor';
-
-const dateTo = new Date();
-const dateFrom = dayjs(dateTo).add(-4, 'day').toDate();
 
 const props = defineProps<{
   sensorItem: SensorItemModel;
+  dateFrom: Date;
+  dateTo: Date;
 }>();
 
 const series = shallowRef<ApexAxisChartSeries>([]);
@@ -35,8 +33,8 @@ const options = ref<ApexOptions>({
   },
   xaxis: {
     type: 'datetime',
-    min: dateFrom.getTime(),
-    max: dateTo.getTime(),
+    min: props.dateFrom.getTime(),
+    max: props.dateTo.getTime(),
     labels: {
       format: 'd MMM',
     },
@@ -50,8 +48,8 @@ const options = ref<ApexOptions>({
 
 async function fetchMeasurements() {
   const data = await MeasurementService.getMeasurements(props.sensorItem.id, {
-    dateFrom,
-    dateTo,
+    dateFrom: props.dateFrom,
+    dateTo: props.dateTo,
   });
 
   series.value = [

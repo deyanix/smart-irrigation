@@ -16,12 +16,6 @@ export function useSectionColumns(): QTableColumn[] {
       align: 'left',
     },
     {
-      name: 'control',
-      field: 'control',
-      label: '',
-      align: 'right',
-    },
-    {
       name: 'actions',
       field: 'actions',
       label: '',
